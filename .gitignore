@@ -9,6 +9,9 @@
 .history
 .svn/
 migrate_working_dir/
+.vscode
+.gitignore
+.github
 
 # IntelliJ related
 *.iml
