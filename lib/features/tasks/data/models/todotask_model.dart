@@ -1,11 +1,11 @@
 
 
-import 'package:duha_app/features/todos/data/models/priority_model.dart';
-import 'package:duha_app/features/todos/data/models/subtask_model.dart';
-import 'package:duha_app/features/todos/data/models/task_comment.dart';
-import 'package:duha_app/features/todos/data/models/taskattachment_model.dart';
+import 'package:duha_app/features/tasks/data/models/priority_model.dart';
+import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_comment.dart';
+import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
 
-class TodoTask {
+class TodoTaskModel {
   final String id;
   String title;
   String description;
@@ -24,7 +24,7 @@ class TodoTask {
   int xpReward;
   List<String> tags;
 
-  TodoTask({
+  TodoTaskModel({
     required this.id,
     required this.title,
     this.description = '',

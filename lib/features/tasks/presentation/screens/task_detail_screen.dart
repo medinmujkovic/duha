@@ -1,12 +1,14 @@
-import 'package:duha_app/features/todos/data/models/priority_model.dart';
-import 'package:duha_app/features/todos/data/models/subtask_model.dart';
-import 'package:duha_app/features/todos/data/models/task_comment.dart';
-import 'package:duha_app/features/todos/data/models/taskattachment_model.dart';
-import 'package:duha_app/features/todos/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/features/tasks/data/models/priority_model.dart';
+import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_comment.dart';
+import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
+import 'package:duha_app/features/tasks/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
 import 'package:flutter/material.dart';
 
 class TaskDetailScreen extends StatefulWidget {
-  final TodoTask task;
+  final TodoTaskModel task;
 
   TaskDetailScreen({required this.task});
 
