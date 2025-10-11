@@ -1,9 +1,9 @@
-class Section {
+class SectionModel {
   final String id;
   String name;
   int order;
 
-  Section({
+  SectionModel({
     required this.id,
     required this.name,
     required this.order,

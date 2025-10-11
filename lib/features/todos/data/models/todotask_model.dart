@@ -1,46 +1,9 @@
-enum Priority { low, medium, high, urgent }
 
-class TaskComment {
-  final String id;
-  final String userId;
-  final String userName;
-  final String content;
-  final DateTime timestamp;
 
-  TaskComment({
-    required this.id,
-    required this.userId,
-    required this.userName,
-    required this.content,
-    required this.timestamp,
-  });
-}
-
-class TaskAttachment {
-  final String id;
-  final String name;
-  final String type; // 'image', 'document'
-  final String url;
-
-  TaskAttachment({
-    required this.id,
-    required this.name,
-    required this.type,
-    required this.url,
-  });
-}
-
-class Subtask {
-  final String id;
-  String title;
-  bool isCompleted;
-
-  Subtask({
-    required this.id,
-    required this.title,
-    this.isCompleted = false,
-  });
-}
+import 'package:duha_app/features/todos/data/models/priority_model.dart';
+import 'package:duha_app/features/todos/data/models/subtask_model.dart';
+import 'package:duha_app/features/todos/data/models/task_comment.dart';
+import 'package:duha_app/features/todos/data/models/taskattachment_model.dart';
 
 class TodoTask {
   final String id;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/auth_screen.dart';
+import 'features/auth/presentation/screens/auth_screen.dart';
 
 void main() {
   runApp(DuhaApp());

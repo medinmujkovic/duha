@@ -1,4 +1,4 @@
-class User {
+class UserModel {
   final String id;
   final String name;
   final String email;
@@ -7,7 +7,7 @@ class User {
   int xp;
   int streak;
 
-  User({
+  UserModel({
     required this.id,
     required this.name,
     required this.email,

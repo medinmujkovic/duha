@@ -1,4 +1,4 @@
-class Project {
+class ProjectModel {
   final String id;
   final String name;
   final String color;
@@ -6,7 +6,7 @@ class Project {
   final String shareLink;
   final bool isShared;
 
-  Project({
+  ProjectModel({
     required this.id,
     required this.name,
     required this.color,
