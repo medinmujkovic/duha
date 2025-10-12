@@ -11,6 +11,7 @@ dependencies:
   # UI & State Management
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
+  flutter_riverpod: ^2.5.1
   
   # Notifications
   flutter_local_notifications: ^16.3.0
@@ -22,10 +23,14 @@ dependencies:
   path_provider: ^2.1.1
   
   # Firebase (for real backend)
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.15.3
-  cloud_firestore: ^4.13.6
-  firebase_storage: ^11.5.6
+  # Core
+  firebase_core: ^3.6.0
+  # Auth
+  firebase_auth: ^5.3.1
+  # Firestore
+  cloud_firestore: ^5.4.4
+  # Storage
+  firebase_storage: ^12.3.3
   
   # File handling
   file_picker: ^6.1.1
@@ -39,10 +44,25 @@ dependencies:
   fl_chart: ^0.66.0
   intl: ^0.18.1
 
+  # Models & Serialization - ANNOTATIONS (runtime)
+  freezed_annotation: ^2.4.4  # ← DODAJ
+  json_annotation: ^4.9.0     # ← DODAJ
+  
+  # Routing
+  go_router: ^14.2.0          # ← DODAJ
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
 
+  # Code Generation - DEV ONLY
+  build_runner: ^2.4.12       # ← DODAJ
+  freezed: ^2.5.7             # ← PREMJESTI iz dependencies!
+  json_serializable: ^6.8.0  # ← DODAJ
+  flutter_lints: ^4.0.0       # ← DODAJ (optional, ali preporučeno)
+
 flutter:
   uses-material-design: true
+
+  generate: true
