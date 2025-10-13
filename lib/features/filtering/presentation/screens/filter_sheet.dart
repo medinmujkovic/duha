@@ -1,4 +1,4 @@
-import 'package:duha_app/features/tasks/data/models/priority_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:flutter/material.dart';
 
 class FilterSheet extends StatefulWidget {

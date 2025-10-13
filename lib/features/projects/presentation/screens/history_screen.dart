@@ -1,5 +1,5 @@
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:flutter/material.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/summary_card.dart';
 
@@ -26,9 +26,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final totalXP =
         filteredTasks.fold<int>(0, (sum, task) => sum + task.xpReward);
 
-    final tasksByProject = <String, List<TodoTaskModel>>{};
+    final tasksByProject = <String, List<Task>>{};
     for (var task in filteredTasks) {
-      tasksByProject.putIfAbsent(task.projectId, () => []).add(task);
+      tasksByProject.putIfAbsent(task.groupId, () => []).add(task);
     }
 
     return Scaffold(

@@ -1,3 +1,4 @@
+import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/features/filtering/presentation/screens/filter_sheet.dart';
 import 'package:duha_app/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
@@ -169,12 +170,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddTaskDialog(context),
-        icon: Icon(Icons.add),
-        label: Text('New Task'),
-        backgroundColor: Color(0xFF7C3AED),
-      ),
+      floatingActionButton: AddTaskButton(onPressed:  () {
+        _showAddTaskDialog(context);
+      },),
     );
   }
 

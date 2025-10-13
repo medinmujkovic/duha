@@ -1,17 +1,17 @@
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/projects/data/models/project_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model.dart';
-import 'package:duha_app/features/tasks/data/models/priority_model.dart';
-import 'package:duha_app/features/tasks/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_enum.dart';
+import 'package:duha_app/features/tasks/data/models/task_model.dart';
 
 class DataService {
   static final DataService _instance = DataService._internal();
   factory DataService() => _instance;
   DataService._internal();
 
-  final List<TodoTaskModel> _tasks = [];
+  final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
-  final List<ProjectModel> _projects = [];
+  final List<GroupModel> _groups = [];
   UserModel _currentUser = UserModel(
     id: '1',
     name: 'You',
@@ -24,15 +24,15 @@ class DataService {
 
   UserModel getCurrentUser() => _currentUser;
 
-  List<TodoTaskModel> getTasks() => _tasks;
+  List<Task> getTasks() => _tasks;
 
-  List<TodoTaskModel> getCompletedTasks() =>
+  List<Task> getCompletedTasks() =>
       _tasks.where((t) => t.isCompleted).toList();
 
   List<SectionModel> getSections() =>
       _sections..sort((a, b) => a.order.compareTo(b.order));
 
-  List<ProjectModel> getProjects() => _projects;
+  List<GroupModel> getGroups() => _groups;
 
   void addTask({
     required String title,
@@ -43,15 +43,16 @@ class DataService {
     String? sectionId,
     required List<String> assigneeIds,
   }) {
-    _tasks.add(TodoTaskModel(
+    _tasks.add(Task(
       id: DateTime.now().toString(),
       title: title,
       description: description,
       priority: priority,
       deadline: deadline,
       repeat: repeat,
-      projectId: 'Marketing Sprint',
+      groupId: 'Marketing Sprint',
       assigneeIds: assigneeIds,
+      type: TaskType.specificMembers,
       sectionId: sectionId,
       createdAt: DateTime.now(),
       xpReward: priority == Priority.urgent
@@ -108,8 +109,8 @@ class DataService {
     section.name = newName;
   }
 
-  void addProject(String name, String color) {
-    _projects.add(ProjectModel(
+  void addGroup(String name, String color) {
+    _groups.add(GroupModel(
       id: DateTime.now().toString(),
       name: name,
       color: color,

@@ -1,9 +1,9 @@
-import 'package:duha_app/features/tasks/data/models/priority_model.dart';
-import 'package:duha_app/features/tasks/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_enum.dart';
+import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:flutter/material.dart';
 
 class TaskCard extends StatelessWidget {
-  final TodoTaskModel task;
+  final Task task;
   final VoidCallback onTap;
   final VoidCallback onToggle;
 

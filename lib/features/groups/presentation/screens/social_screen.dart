@@ -1,3 +1,4 @@
+import 'package:duha_app/features/groups/presentation/screens/group_detail_screen.dart';
 import 'package:duha_app/features/projects/data/models/project_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class _SocialScreenState extends State<SocialScreen>
           tabs: [
             Tab(text: 'Feed'),
             Tab(text: 'Leaderboard'),
-            Tab(text: 'Projects'),
+            Tab(text: 'Groups'),
           ],
         ),
       ),
@@ -37,7 +38,7 @@ class _SocialScreenState extends State<SocialScreen>
         children: [
           _buildFeedTab(),
           _buildLeaderboardTab(),
-          _buildProjectsTab(),
+          _buildGroupsTab(),
         ],
       ),
     );
@@ -45,11 +46,40 @@ class _SocialScreenState extends State<SocialScreen>
 
   Widget _buildFeedTab() {
     final activities = [
-      {'user': 'Sarah', 'action': 'completed', 'task': 'Weekly Report', 'xp': 60, 'time': '2 min ago'},
-      {'user': 'You', 'action': 'achieved', 'milestone': '7-day streak', 'xp': 100, 'time': '1 hour ago'},
-      {'user': 'Ahmed', 'action': 'leveled up', 'level': 15, 'time': '2 hours ago'},
-      {'user': 'Alex', 'action': 'completed', 'task': 'Code Review', 'xp': 80, 'time': '3 hours ago'},
-      {'user': 'Team Dev', 'action': 'completed', 'task': 'Sprint Planning', 'xp': 120, 'time': '5 hours ago'},
+      {
+        'user': 'Sarah',
+        'action': 'completed',
+        'task': 'Weekly Report',
+        'xp': 60,
+        'time': '2 min ago'
+      },
+      {
+        'user': 'You',
+        'action': 'achieved',
+        'milestone': '7-day streak',
+        'xp': 100,
+        'time': '1 hour ago'
+      },
+      {
+        'user': 'Ahmed',
+        'action': 'leveled up',
+        'level': 15,
+        'time': '2 hours ago'
+      },
+      {
+        'user': 'Alex',
+        'action': 'completed',
+        'task': 'Code Review',
+        'xp': 80,
+        'time': '3 hours ago'
+      },
+      {
+        'user': 'Team Dev',
+        'action': 'completed',
+        'task': 'Sprint Planning',
+        'xp': 120,
+        'time': '5 hours ago'
+      },
     ];
 
     return ListView.builder(
@@ -67,7 +97,8 @@ class _SocialScreenState extends State<SocialScreen>
               backgroundColor: Color(0xFF7C3AED),
               child: Text(
                 activity['user'].toString()[0],
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
             title: RichText(
@@ -139,7 +170,7 @@ class _SocialScreenState extends State<SocialScreen>
         final user = leaderboard[index];
         final rank = index + 1;
         Color? medalColor;
-        
+
         if (rank == 1) medalColor = Colors.amber;
         if (rank == 2) medalColor = Colors.grey[400];
         if (rank == 3) medalColor = Colors.orange[300];
@@ -177,7 +208,8 @@ class _SocialScreenState extends State<SocialScreen>
                 Icon(Icons.star, size: 14, color: Colors.amber),
                 Text(' ${user['xp']} XP'),
                 SizedBox(width: 12),
-                Icon(Icons.local_fire_department, size: 14, color: Colors.orange),
+                Icon(Icons.local_fire_department,
+                    size: 14, color: Colors.orange),
                 Text(' ${user['streak']}d'),
               ],
             ),
@@ -197,8 +229,8 @@ class _SocialScreenState extends State<SocialScreen>
     );
   }
 
-  Widget _buildProjectsTab() {
-    final projects = _dataService.getProjects();
+  Widget _buildGroupsTab() {
+    final groups = _dataService.getGroups();
 
     return ListView(
       padding: EdgeInsets.all(16),
@@ -213,7 +245,7 @@ class _SocialScreenState extends State<SocialScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Share Your Projects',
+                  'Share Your Group',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -221,14 +253,14 @@ class _SocialScreenState extends State<SocialScreen>
                 ),
                 SizedBox(height: 8),
                 Text(
-                  'Invite team members to collaborate on your projects',
+                  'Invite team members to collaborate on your groups',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 SizedBox(height: 16),
                 ElevatedButton.icon(
-                  onPressed: () => _showCreateProjectDialog(context),
+                  onPressed: () => _showCreateGroupDialog(context),
                   icon: Icon(Icons.add),
-                  label: Text('Create New Project'),
+                  label: Text('Create New Group'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF7C3AED),
                     foregroundColor: Colors.white,
@@ -240,40 +272,51 @@ class _SocialScreenState extends State<SocialScreen>
         ),
         SizedBox(height: 16),
         Text(
-          'Your Projects',
+          'Your Groups',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 12),
-        ...projects.map((project) {
+        ...groups.map((group) {
           return Card(
             margin: EdgeInsets.only(bottom: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
-            child: ListTile(
-              leading: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: _getColorFromString(project.color),
-                  borderRadius: BorderRadius.circular(8),
+            child: InkWell(
+              onTap: () {
+                // router will be implemented later
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GroupDetailScreen(groupId: group.id),
+                  ),
+                );
+              },
+              child: ListTile(
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: _getColorFromString(group.color),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.folder, color: Colors.white),
                 ),
-                child: Icon(Icons.folder, color: Colors.white),
-              ),
-              title: Text(
-                project.name,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Row(
-                children: [
-                  Icon(Icons.people, size: 14),
-                  SizedBox(width: 4),
-                  Text('${project.memberIds.length} members'),
-                ],
-              ),
-              trailing: IconButton(
-                icon: Icon(Icons.share),
-                onPressed: () => _showShareDialog(context, project),
+                title: Text(
+                  group.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Row(
+                  children: [
+                    Icon(Icons.people, size: 14),
+                    SizedBox(width: 4),
+                    Text('${group.memberIds.length} members'),
+                  ],
+                ),
+                trailing: IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () => _showShareDialog(context, group),
+                ),
               ),
             ),
           );
@@ -284,30 +327,36 @@ class _SocialScreenState extends State<SocialScreen>
 
   Color _getColorFromString(String color) {
     switch (color) {
-      case 'purple': return Colors.purple;
-      case 'blue': return Colors.blue;
-      case 'green': return Colors.green;
-      case 'orange': return Colors.orange;
-      case 'pink': return Colors.pink;
-      default: return Colors.grey;
+      case 'purple':
+        return Colors.purple;
+      case 'blue':
+        return Colors.blue;
+      case 'green':
+        return Colors.green;
+      case 'orange':
+        return Colors.orange;
+      case 'pink':
+        return Colors.pink;
+      default:
+        return Colors.grey;
     }
   }
 
-  void _showCreateProjectDialog(BuildContext context) {
+  void _showCreateGroupDialog(BuildContext context) {
     final nameController = TextEditingController();
     String selectedColor = 'purple';
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Create New Project'),
+        title: Text('Create New Group'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
               decoration: InputDecoration(
-                labelText: 'Project Name',
+                labelText: 'Group Name',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -318,7 +367,8 @@ class _SocialScreenState extends State<SocialScreen>
             SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: ['purple', 'blue', 'green', 'orange', 'pink'].map((color) {
+              children:
+                  ['purple', 'blue', 'green', 'orange', 'pink'].map((color) {
                 return GestureDetector(
                   onTap: () => selectedColor = color,
                   child: Container(
@@ -342,7 +392,7 @@ class _SocialScreenState extends State<SocialScreen>
           ElevatedButton(
             onPressed: () {
               if (nameController.text.isNotEmpty) {
-                _dataService.addProject(nameController.text, selectedColor);
+                _dataService.addGroup(nameController.text, selectedColor);
                 Navigator.pop(context);
                 setState(() {});
               }
@@ -354,11 +404,11 @@ class _SocialScreenState extends State<SocialScreen>
     );
   }
 
-  void _showShareDialog(BuildContext context, ProjectModel project) {
+  void _showShareDialog(BuildContext context, GroupModel group) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Share Project'),
+        title: Text('Share Group'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -371,7 +421,7 @@ class _SocialScreenState extends State<SocialScreen>
                 borderRadius: BorderRadius.circular(8),
               ),
               child: SelectableText(
-                project.shareLink,
+                group.shareLink,
                 style: TextStyle(fontFamily: 'monospace'),
               ),
             ),

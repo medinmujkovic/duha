@@ -1,3 +1,4 @@
+import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/features/projects/data/models/section_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
@@ -21,7 +22,7 @@ class _CustomListViewState extends State<CustomListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Tasks'),
+        title: Text('All Projects'),
         actions: [
           IconButton(
             icon: Icon(Icons.add_box_outlined),
@@ -129,16 +130,13 @@ class _CustomListViewState extends State<CustomListView> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: AddTaskButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddEditTaskScreen()),
           );
         },
-        icon: Icon(Icons.add),
-        label: Text('New Task'),
-        backgroundColor: Color(0xFF7C3AED),
       ),
     );
   }
@@ -241,7 +239,7 @@ class _CustomListViewState extends State<CustomListView> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(task.projectId),
+                        Text(task.groupId),
                         Text(
                           'Completed by: ${task.completedByIds.join(", ")}',
                           style: TextStyle(fontSize: 12),
@@ -263,8 +261,6 @@ class _CustomListViewState extends State<CustomListView> {
           ),
         );
       },
-      
     );
   }
 }
-

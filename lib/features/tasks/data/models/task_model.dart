@@ -1,18 +1,17 @@
-
-
-import 'package:duha_app/features/tasks/data/models/priority_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_comment.dart';
 import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
 
-class TodoTaskModel {
+class Task {
   final String id;
   String title;
   String description;
   Priority priority;
   DateTime? deadline;
+  TaskType? type; // all-members, specific-members
   String? repeat; // 'daily', 'weekly', 'monthly', 'every-2-days', 'weekdays'
-  String projectId;
+  String groupId;
   List<String> assigneeIds;
   List<String> completedByIds;
   List<Subtask> subtasks;
@@ -24,14 +23,14 @@ class TodoTaskModel {
   int xpReward;
   List<String> tags;
 
-  TodoTaskModel({
+  Task({
     required this.id,
     required this.title,
     this.description = '',
     this.priority = Priority.medium,
     this.deadline,
     this.repeat,
-    required this.projectId,
+    required this.groupId,
     required this.assigneeIds,
     this.completedByIds = const [],
     this.subtasks = const [],
@@ -41,7 +40,7 @@ class TodoTaskModel {
     required this.createdAt,
     this.completedAt,
     this.xpReward = 50,
-    this.tags = const [],
+    this.tags = const [], required TaskType type,
   });
 
   bool get isCompleted => assigneeIds.isNotEmpty && 

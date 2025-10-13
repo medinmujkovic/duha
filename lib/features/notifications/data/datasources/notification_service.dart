@@ -1,4 +1,4 @@
-import 'package:duha_app/features/tasks/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_model.dart';
 
 class NotificationService {
   void initialize() {
@@ -6,7 +6,7 @@ class NotificationService {
     // This would set up notification channels for Android and iOS
   }
 
-  void scheduleReminder(TodoTaskModel task) {
+  void scheduleReminder(Task task) {
     // Schedule a notification for the task deadline
     // Using flutter_local_notifications package
   }

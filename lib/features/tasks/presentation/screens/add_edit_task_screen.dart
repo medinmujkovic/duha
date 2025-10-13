@@ -1,10 +1,10 @@
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/data/models/priority_model.dart';
-import 'package:duha_app/features/tasks/data/models/todotask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_enum.dart';
+import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:flutter/material.dart';
 
 class AddEditTaskScreen extends StatefulWidget {
-  final TodoTaskModel? task;
+  final Task? task;
   final String? sectionId;
 
   AddEditTaskScreen({this.task, this.sectionId});
