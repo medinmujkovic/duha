@@ -1,3 +1,4 @@
+import 'package:duha_app/common/utils/priority_colors.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final priorityColor = _getPriorityColor(task.priority);
+    final priorityColor = getPriorityColor(task.priority);
 
     return Card(
       margin: EdgeInsets.only(bottom: 12),
@@ -198,16 +199,4 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Color _getPriorityColor(Priority priority) {
-    switch (priority) {
-      case Priority.urgent:
-        return Colors.red;
-      case Priority.high:
-        return Colors.orange;
-      case Priority.medium:
-        return Colors.yellow[700]!;
-      case Priority.low:
-        return Colors.green;
-    }
-  }
 }

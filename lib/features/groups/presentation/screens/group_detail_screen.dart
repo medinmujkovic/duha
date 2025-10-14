@@ -1,8 +1,11 @@
 // lib/presentation/group/group_detail_screen.dart
 import 'package:duha_app/common/widgets/new_task_button.dart';
+import 'package:duha_app/features/groups/presentation/widgets/group_task_detail_sheet.dart';
+import 'package:duha_app/features/groups/presentation/widgets/info_card.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,7 +29,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
       groupId: 'group1',
       title: 'Dizajnirati novi logo',
       description: 'Kreirati moderan logo za aplikaciju',
-      type: TaskType.specificMembers,
+      type: TaskType.allMembers,
       assigneeIds: ['user1', 'user2'],
       subtasks: [
         Subtask(id: '1', title: 'Istraživanje konkurencije', isCompleted: true),
@@ -41,17 +44,34 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     Task(
       id: '2',
       groupId: 'group1',
-      title: 'Dizajnirati novi logo',
-      description: 'Kreirati moderan logo za aplikaciju',
+      title: 'Dizajnirati kampanju na društvenim mrežama',
+      description: 'Kreirati novi automatizirani sistem za izvještavanje',
       type: TaskType.specificMembers,
-      assigneeIds: ['user1', 'user2'],
+      assigneeIds: ['user1', 'user2', 'user3'],
       subtasks: [
         Subtask(id: '1', title: 'Istraživanje konkurencije', isCompleted: true),
         Subtask(id: '2', title: 'Skice i draft verzije', isCompleted: true),
         Subtask(id: '3', title: 'Finalna verzija', isCompleted: false),
       ],
       deadline: DateTime.now().add(Duration(days: 3)),
-      priority: Priority.high,
+      priority: Priority.medium,
+      completedByIds: ['user1'],
+      createdAt: DateTime.now().subtract(Duration(days: 2)),
+    ),
+        Task(
+      id: '3',
+      groupId: 'group1',
+      title: 'Iskopati nove kanale za promociju',
+      description: 'Kanali koji su do sada zanemareni',
+      type: TaskType.specificMembers,
+      assigneeIds: ['user1', 'user2', 'user3'],
+      subtasks: [
+        Subtask(id: '1', title: 'Istraživanje konkurencije', isCompleted: true),
+        Subtask(id: '2', title: 'Skice i draft verzije', isCompleted: true),
+        Subtask(id: '3', title: 'Finalna verzija', isCompleted: false),
+      ],
+      deadline: DateTime.now().add(Duration(days: 3)),
+      priority: Priority.low,
       completedByIds: ['user1'],
       createdAt: DateTime.now().subtract(Duration(days: 2)),
     ),
@@ -236,7 +256,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
         ],
       ),
       body: _mockTasks.isEmpty
-          ? Center(
+          ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -255,11 +275,11 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               itemCount: _mockTasks.length,
               itemBuilder: (context, index) {
                 final task = _mockTasks[index];
-                return TaskCard(
+                return GroupTaskCard(
                   task: task,
                   onTap: () => _showTaskDetail(task),
                 );
@@ -270,470 +290,6 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           _showCreateTaskDialog();
         },
       ),
-    );
-  }
-}
-
-// Task Card Widget
-class TaskCard extends StatelessWidget {
-  final Task task;
-  final VoidCallback onTap;
-
-  const TaskCard({
-    super.key,
-    required this.task,
-    required this.onTap,
-  });
-
-  Color _getPriorityColor(Priority priority) {
-    switch (priority) {
-      case Priority.high:
-        return Colors.red;
-      case Priority.medium:
-        return Colors.orange;
-      case Priority.low:
-        return Colors.green;
-      case Priority.urgent:
-        return Colors.purple;
-    }
-  }
-
-  String _getDueDateText(DateTime? dueAt) {
-    if (dueAt == null) return 'Bez roka';
-
-    final now = DateTime.now();
-    final difference = dueAt.difference(now);
-
-    if (difference.isNegative) {
-      return 'Kasni ${difference.inDays.abs()} dana';
-    } else if (difference.inDays == 0) {
-      return 'Danas';
-    } else if (difference.inDays == 1) {
-      return 'Sutra';
-    } else {
-      return 'Za ${difference.inDays} dana';
-    }
-  }
-
-  double _getProgress() {
-    if (task.subtasks.isEmpty) {
-      return task.completedByIds.isNotEmpty ? 1.0 : 0.0;
-    }
-
-    final completed = task.subtasks.where((s) => s.isCompleted).length;
-    return completed / task.subtasks.length;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final progress = _getProgress();
-    final hasSubtasks = task.subtasks.isNotEmpty;
-
-    return Card(
-      margin: EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header: Title + Priority
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      task.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _getPriorityColor(task.priority).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      task.priority.name,
-                      style: TextStyle(
-                        color: _getPriorityColor(task.priority),
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              if (task.description != null) ...[
-                SizedBox(height: 8),
-                Text(
-                  task.description!,
-                  style: TextStyle(color: Colors.grey[600]),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-
-              SizedBox(height: 12),
-
-              // Progress bar (ako ima subtaskova)
-              if (hasSubtasks) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: progress,
-                          minHeight: 8,
-                          backgroundColor: Colors.grey[200],
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            progress == 1.0 ? Colors.green : Colors.blue,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      '${(progress * 100).toInt()}%',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-                Text(
-                  '${task.subtasks.where((s) => s.isCompleted).length}/${task.subtasks.length} podzadataka',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-                SizedBox(height: 12),
-              ],
-
-              // Footer: Assignees + Due date + Type
-              Row(
-                children: [
-                  // Assignees avatars
-                  if (task.assigneeIds != null && task.assigneeIds!.isNotEmpty)
-                    SizedBox(
-                      width: 80,
-                      height: 28,
-                      child: Stack(
-                        children: List.generate(
-                          task.assigneeIds!.length > 3
-                              ? 3
-                              : task.assigneeIds!.length,
-                          (index) => Positioned(
-                            left: index * 20.0,
-                            child: CircleAvatar(
-                              radius: 14,
-                              backgroundColor: Colors
-                                  .primaries[index % Colors.primaries.length],
-                              child: Text(
-                                'U${index + 1}',
-                                style: TextStyle(
-                                    fontSize: 10, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  SizedBox(width: 12),
-
-                  // Due date
-                  Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text(
-                    _getDueDateText(task.deadline),
-                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-                  ),
-
-                  Spacer(),
-
-                  // Task type chip
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: task.type == TaskType.allMembers
-                          ? Colors.blue.withOpacity(0.1)
-                          : Colors.purple.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      task.type == TaskType.allMembers ? 'SVI' : 'BILO KO',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: task.type == TaskType.allMembers
-                            ? Colors.blue
-                            : Colors.purple,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Task Detail Sheet
-class TaskDetailSheet extends StatefulWidget {
-  final Task task;
-  final ScrollController scrollController;
-
-  const TaskDetailSheet({
-    super.key,
-    required this.task,
-    required this.scrollController,
-  });
-
-  @override
-  State<TaskDetailSheet> createState() => _TaskDetailSheetState();
-}
-
-class _TaskDetailSheetState extends State<TaskDetailSheet> {
-  late List<Subtask> _subtasks;
-
-  @override
-  void initState() {
-    super.initState();
-    _subtasks = List.from(widget.task.subtasks);
-  }
-
-  void _toggleSubtask(int index) {
-    setState(() {
-      _subtasks[index] =
-          _subtasks[index].copyWith(isCompleted: !_subtasks[index].isCompleted);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final completedCount = _subtasks.where((s) => s.isCompleted).length;
-    final progress =
-        _subtasks.isEmpty ? 0.0 : completedCount / _subtasks.length;
-
-    return Container(
-      padding: EdgeInsets.all(24),
-      child: ListView(
-        controller: widget.scrollController,
-        children: [
-          // Handle bar
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          SizedBox(height: 24),
-
-          // Title
-          Text(
-            widget.task.title,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16),
-
-          // Description
-          if (widget.task.description != null) ...[
-            Text(
-              widget.task.description!,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 24),
-          ],
-
-          // Progress (if has subtasks)
-          if (_subtasks.isNotEmpty) ...[
-            Text(
-              'Progres',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: progress,
-                minHeight: 12,
-                backgroundColor: Colors.grey[200],
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  progress == 1.0 ? Colors.green : Colors.blue,
-                ),
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              '$completedCount/${_subtasks.length} podzadataka završeno (${(progress * 100).toInt()}%)',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            SizedBox(height: 24),
-
-            // Subtasks list
-            Text(
-              'Podzadaci',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 12),
-            ..._subtasks.asMap().entries.map((entry) {
-              final index = entry.key;
-              final subtask = entry.value;
-              return CheckboxListTile(
-                value: subtask.isCompleted,
-                onChanged: (_) => _toggleSubtask(index),
-                title: Text(
-                  subtask.title,
-                  style: TextStyle(
-                    decoration:
-                        subtask.isCompleted ? TextDecoration.lineThrough : null,
-                    color: subtask.isCompleted ? Colors.grey : null,
-                  ),
-                ),
-                contentPadding: EdgeInsets.zero,
-              );
-            }).toList(),
-            SizedBox(height: 24),
-          ],
-
-          // Info cards
-          Row(
-            children: [
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.calendar_today,
-                  label: 'Rok',
-                  value: widget.task.deadline != null
-                      ? '${widget.task.deadline!.day}/${widget.task.deadline!.month}'
-                      : 'Nema',
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: _InfoCard(
-                  icon: Icons.priority_high,
-                  label: 'Prioritet',
-                  value: widget.task.priority.name,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 24),
-
-          // Action buttons
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    // TODO: Edit task
-                  },
-                  icon: Icon(Icons.edit),
-                  label: Text('Uredi'),
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Zadatak označen kao završen')),
-                    );
-                  },
-                  icon: Icon(Icons.check),
-                  label: Text('Završi'),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _InfoCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
-          SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-          ),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Create Task Dialog (Placeholder)
-class CreateTaskDialog extends StatelessWidget {
-  final String groupId;
-
-  const CreateTaskDialog({super.key, required this.groupId});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Novi zadatak'),
-      content: Text('Forma za kreiranje zadatka (TODO)'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text('Otkaži'),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Zadatak kreiran')),
-            );
-          },
-          child: Text('Kreiraj'),
-        ),
-      ],
     );
   }
 }

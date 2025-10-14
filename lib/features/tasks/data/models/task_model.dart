@@ -40,7 +40,8 @@ class Task {
     required this.createdAt,
     this.completedAt,
     this.xpReward = 50,
-    this.tags = const [], required TaskType type,
+    this.tags = const [], 
+    this.type,
   });
 
   bool get isCompleted => assigneeIds.isNotEmpty && 
