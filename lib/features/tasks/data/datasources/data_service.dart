@@ -26,6 +26,9 @@ class DataService {
 
   List<Task> getTasks() => _tasks;
 
+  List<Task> getTasksForGroup(String groupId) =>
+      _tasks.where((t) => t.groupId == groupId).toList();
+
   List<Task> getCompletedTasks() =>
       _tasks.where((t) => t.isCompleted).toList();
 
@@ -41,6 +44,8 @@ class DataService {
     DateTime? deadline,
     String? repeat,
     String? sectionId,
+    String? groupId,
+    TaskType? taskType,
     required List<String> assigneeIds,
   }) {
     _tasks.add(Task(
@@ -50,9 +55,9 @@ class DataService {
       priority: priority,
       deadline: deadline,
       repeat: repeat,
-      groupId: 'Marketing Sprint',
+      groupId: groupId,
       assigneeIds: assigneeIds,
-      type: TaskType.specificMembers,
+      type: taskType,
       sectionId: sectionId,
       createdAt: DateTime.now(),
       xpReward: priority == Priority.urgent

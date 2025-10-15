@@ -11,7 +11,7 @@ class Task {
   DateTime? deadline;
   TaskType? type; // all-members, specific-members
   String? repeat; // 'daily', 'weekly', 'monthly', 'every-2-days', 'weekdays'
-  String groupId;
+  String? groupId;
   List<String> assigneeIds;
   List<String> completedByIds;
   List<Subtask> subtasks;

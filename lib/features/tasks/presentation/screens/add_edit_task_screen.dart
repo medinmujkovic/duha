@@ -135,7 +135,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              items: [
+              items: const [
                 DropdownMenuItem(value: null, child: Text('No repeat')),
                 DropdownMenuItem(value: 'daily', child: Text('Daily')),
                 DropdownMenuItem(value: 'weekdays', child: Text('Weekdays')),
@@ -150,7 +150,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _selectedSectionId,
               decoration: InputDecoration(
@@ -160,7 +160,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
                 ),
               ),
               items: [
-                DropdownMenuItem(value: null, child: Text('No section')),
+                const DropdownMenuItem(value: null, child: Text('No section')),
                 ..._dataService.getSections().map((section) {
                   return DropdownMenuItem(
                     value: section.id,
@@ -175,7 +175,7 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
               },
             ),
             SizedBox(height: 16),
-            Text(
+            const Text(
               'Assignees',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
@@ -230,16 +230,16 @@ class _AddEditTaskScreenState extends State<AddEditTaskScreen> {
             ElevatedButton(
               onPressed: _saveTask,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF7C3AED),
+                backgroundColor: const Color(0xFF7C3AED),
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: Text(
                 widget.task == null ? 'Create Task' : 'Save Changes',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ],

@@ -28,7 +28,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     final tasksByProject = <String, List<Task>>{};
     for (var task in filteredTasks) {
-      tasksByProject.putIfAbsent(task.groupId, () => []).add(task);
+      tasksByProject.putIfAbsent(task.groupId ?? '0', () => []).add(task);
     }
 
     return Scaffold(

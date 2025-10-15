@@ -239,7 +239,7 @@ class _CustomListViewState extends State<CustomListView> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(task.groupId),
+                        Text(task.groupId ?? 'No Group'),
                         Text(
                           'Completed by: ${task.completedByIds.join(", ")}',
                           style: TextStyle(fontSize: 12),

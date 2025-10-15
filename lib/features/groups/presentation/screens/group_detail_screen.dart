@@ -2,10 +2,13 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_detail_sheet.dart';
 import 'package:duha_app/features/groups/presentation/widgets/info_card.dart';
+import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
+import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
+import 'package:duha_app/features/tasks/presentation/widgets/task_create_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,61 +25,8 @@ class GroupDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
-  // Mock data za testiranje
-  final List<Task> _mockTasks = [
-    Task(
-      id: '1',
-      groupId: 'group1',
-      title: 'Dizajnirati novi logo',
-      description: 'Kreirati moderan logo za aplikaciju',
-      type: TaskType.allMembers,
-      assigneeIds: ['user1', 'user2'],
-      subtasks: [
-        Subtask(id: '1', title: 'Istraživanje konkurencije', isCompleted: true),
-        Subtask(id: '2', title: 'Skice i draft verzije', isCompleted: true),
-        Subtask(id: '3', title: 'Finalna verzija', isCompleted: false),
-      ],
-      deadline: DateTime.now().add(Duration(days: 3)),
-      priority: Priority.high,
-      completedByIds: ['user1'],
-      createdAt: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Task(
-      id: '2',
-      groupId: 'group1',
-      title: 'Dizajnirati kampanju na društvenim mrežama',
-      description: 'Kreirati novi automatizirani sistem za izvještavanje',
-      type: TaskType.specificMembers,
-      assigneeIds: ['user1', 'user2', 'user3'],
-      subtasks: [
-        Subtask(id: '1', title: 'Istraživanje konkurencije', isCompleted: true),
-        Subtask(id: '2', title: 'Skice i draft verzije', isCompleted: true),
-        Subtask(id: '3', title: 'Finalna verzija', isCompleted: false),
-      ],
-      deadline: DateTime.now().add(Duration(days: 3)),
-      priority: Priority.medium,
-      completedByIds: ['user1'],
-      createdAt: DateTime.now().subtract(Duration(days: 2)),
-    ),
-        Task(
-      id: '3',
-      groupId: 'group1',
-      title: 'Iskopati nove kanale za promociju',
-      description: 'Kanali koji su do sada zanemareni',
-      type: TaskType.specificMembers,
-      assigneeIds: ['user1', 'user2', 'user3'],
-      subtasks: [
-        Subtask(id: '1', title: 'Istraživanje konkurencije', isCompleted: true),
-        Subtask(id: '2', title: 'Skice i draft verzije', isCompleted: true),
-        Subtask(id: '3', title: 'Finalna verzija', isCompleted: false),
-      ],
-      deadline: DateTime.now().add(Duration(days: 3)),
-      priority: Priority.low,
-      completedByIds: ['user1'],
-      createdAt: DateTime.now().subtract(Duration(days: 2)),
-    ),
-  ];
 
+  final DataService _dataService = DataService();
   bool _notificationsEnabled = true;
 
   void _showGroupMenu() {
@@ -216,13 +166,6 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     );
   }
 
-  void _showCreateTaskDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => CreateTaskDialog(groupId: widget.groupId),
-    );
-  }
-
   void _showTaskDetail(Task task) {
     showModalBottomSheet(
       context: context,
@@ -237,7 +180,26 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
         expand: false,
         builder: (context, scrollController) => TaskDetailSheet(
           task: task,
-          scrollController: scrollController,
+          scrollController: scrollController, dataService: _dataService,
+        ),
+      ),
+    );
+  }
+
+    void _showTaskCreate(context ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, scrollController) => TaskCreateSheet(
+          scrollController: scrollController, groupId: widget.groupId
         ),
       ),
     );
@@ -245,6 +207,10 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final tasks = _dataService.getTasksForGroup(widget.groupId);
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Marketing Tim'),
@@ -255,7 +221,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           ),
         ],
       ),
-      body: _mockTasks.isEmpty
+      body: tasks.isEmpty
           ? const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -276,9 +242,9 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
-              itemCount: _mockTasks.length,
+              itemCount: tasks.where((t) => !t.isCompleted).take(5).length,
               itemBuilder: (context, index) {
-                final task = _mockTasks[index];
+                final task = tasks.where((t) => !t.isCompleted).toList()[index];
                 return GroupTaskCard(
                   task: task,
                   onTap: () => _showTaskDetail(task),
@@ -287,9 +253,11 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
             ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          _showCreateTaskDialog();
+          _showTaskCreate(context);
         },
       ),
     );
   }
+
 }
+
