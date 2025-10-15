@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../../main_screen.dart';
-
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -23,9 +23,11 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -38,131 +40,148 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         child: SafeArea(
           child: Center(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(24),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.rocket_launch,
-                        size: 64,
-                        color: Color(0xFF7C3AED),
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Project Nova',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 600
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 48),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/img/logo.svg',
+                          height: 100, 
+                          width: 100,
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Your Ultimate Productivity Hub',
-                        style: TextStyle(
-                          color: Colors.grey[600],
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Duha',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 32),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => setState(() => isLogin = true),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isLogin
-                                    ? Color(0xFF7C3AED)
-                                    : Colors.grey[200],
-                                foregroundColor:
-                                    isLogin ? Colors.white : Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Start Your Morning With Clarity',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Toggle buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    setState(() => isLogin = true),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isLogin
+                                      ? const Color(0xFF7C3AED)
+                                      : Colors.grey[200],
+                                  foregroundColor:
+                                      isLogin ? Colors.white : Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                 ),
+                                child: const Text('Login'),
                               ),
-                              child: Text('Login'),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () =>
+                                    setState(() => isLogin = false),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: !isLogin
+                                      ? const Color(0xFF7C3AED)
+                                      : Colors.grey[200],
+                                  foregroundColor:
+                                      !isLogin ? Colors.white : Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                child: const Text('Register'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        if (!isLogin) ...[
+                          TextField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: 'Full Name',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              prefixIcon: const Icon(Icons.person),
                             ),
                           ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () => setState(() => isLogin = false),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: !isLogin
-                                    ? Color(0xFF7C3AED)
-                                    : Colors.grey[200],
-                                foregroundColor:
-                                    !isLogin ? Colors.white : Colors.black,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Text('Register'),
-                            ),
-                          ),
+                          const SizedBox(height: 16),
                         ],
-                      ),
-                      SizedBox(height: 24),
-                      if (!isLogin) ...[
+
                         TextField(
-                          controller: _nameController,
+                          controller: _emailController,
                           decoration: InputDecoration(
-                            labelText: 'Full Name',
+                            labelText: 'Email',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            prefixIcon: Icon(Icons.person),
+                            prefixIcon: const Icon(Icons.email),
                           ),
                         ),
-                        SizedBox(height: 16),
-                      ],
-                      TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          prefixIcon: Icon(Icons.email),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          prefixIcon: Icon(Icons.lock),
-                        ),
-                      ),
-                      SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: _authenticate,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFF7C3AED),
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
+                        const SizedBox(height: 16),
+
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-                          ),
-                          child: Text(
-                            isLogin ? 'Sign In' : 'Create Account',
-                            style: TextStyle(fontSize: 16),
+                            prefixIcon: const Icon(Icons.lock),
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 24),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _authenticate,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF7C3AED),
+                              foregroundColor: Colors.white,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              isLogin ? 'Sign In' : 'Create Account',
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
