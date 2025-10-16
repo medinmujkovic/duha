@@ -1,10 +1,10 @@
+import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_comment.dart';
 import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
-import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
 import 'package:flutter/material.dart';
 
 class TaskDetailScreen extends StatefulWidget {
@@ -32,12 +32,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddEditTaskScreen(task: task),
-                ),
-              );
+              showTaskDetail(context,_dataService, task);
             },
           ),
           IconButton(
@@ -100,8 +95,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow(Icons.flag, 'Priority',
-                      task.priority.name.toUpperCase()),
+                  _buildInfoRow(
+                      Icons.flag, 'Priority', task.priority.name.toUpperCase()),
                   if (task.deadline != null)
                     _buildInfoRow(Icons.calendar_today, 'Due Date',
                         '${task.deadline!.day}/${task.deadline!.month}/${task.deadline!.year}'),
@@ -529,7 +524,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 setState(() {
                   widget.task.attachments.add(TaskAttachment(
                     id: DateTime.now().toString(),
-                    name: 'Document_${DateTime.now().millisecondsSinceEpoch}.pdf',
+                    name:
+                        'Document_${DateTime.now().millisecondsSinceEpoch}.pdf',
                     type: 'document',
                     url: 'mock_url',
                   ));

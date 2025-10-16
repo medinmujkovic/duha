@@ -1,3 +1,4 @@
+import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/groups/presentation/widgets/info_card.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
@@ -13,6 +14,7 @@ class TaskDetailSheet extends StatefulWidget {
     required this.task,
     required this.scrollController,
     required DataService dataService,
+    String? sectionId,
   });
 
   @override
@@ -157,8 +159,7 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    Navigator.pop(context);
-                    // TODO: Edit task
+                    showTaskCreate(context, null, task: widget.task);
                   },
                   icon: Icon(Icons.edit),
                   label: Text('Uredi'),

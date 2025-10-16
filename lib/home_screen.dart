@@ -1,8 +1,8 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
+import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/filtering/presentation/screens/filter_sheet.dart';
 import 'package:duha_app/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
 import 'package:duha_app/features/tasks/presentation/screens/task_detail_screen.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
@@ -132,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   TextButton.icon(
                     onPressed: () {
-                      _showAddTaskDialog(context);
+                      showTaskCreate(context,null);
                     },
                     icon: Icon(Icons.add),
                     label: Text('Add'),
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: AddTaskButton(onPressed:  () {
-        _showAddTaskDialog(context);
+        showTaskCreate(context,null);
       },),
     );
   }
@@ -199,13 +199,6 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(label, style: TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),
-    );
-  }
-
-  void _showAddTaskDialog(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => AddEditTaskScreen()),
     );
   }
 

@@ -1,14 +1,8 @@
 // lib/presentation/group/group_detail_screen.dart
 import 'package:duha_app/common/widgets/new_task_button.dart';
-import 'package:duha_app/features/groups/presentation/widgets/group_task_detail_sheet.dart';
-import 'package:duha_app/features/groups/presentation/widgets/info_card.dart';
+import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/data/models/task_enum.dart';
-import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
-import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
-import 'package:duha_app/features/tasks/presentation/widgets/task_create_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -166,44 +160,6 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     );
   }
 
-  void _showTaskDetail(Task task) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => TaskDetailSheet(
-          task: task,
-          scrollController: scrollController, dataService: _dataService,
-        ),
-      ),
-    );
-  }
-
-    void _showTaskCreate(context ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => TaskCreateSheet(
-          scrollController: scrollController, groupId: widget.groupId
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,13 +203,13 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
                 final task = tasks.where((t) => !t.isCompleted).toList()[index];
                 return GroupTaskCard(
                   task: task,
-                  onTap: () => _showTaskDetail(task),
+                  onTap: () => showTaskDetail(context,_dataService, task),
                 );
               },
             ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          _showTaskCreate(context);
+          showTaskCreate(context, widget.groupId);
         },
       ),
     );

@@ -7,14 +7,17 @@ import '../../data/models/task_model.dart';
 
 class TaskCreateSheet extends StatefulWidget {
   final ScrollController scrollController;
-  final String groupId;
+  final String? groupId;
   final Task? task; // Ako editujemo postojeći task
+  final String? sectionId;  
 
   const TaskCreateSheet({
     super.key,
     required this.scrollController,
-    required this.groupId,
+    this.groupId,    
+    this.sectionId,
     this.task,
+
   });
 
   @override
@@ -26,7 +29,6 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final DataService _dataService = DataService();
-  String? _selectedSectionId;
 
   TaskType _selectedTaskType = TaskType.allMembers;
   Priority _selectedPriority = Priority.medium;
@@ -40,6 +42,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
     'Alex',
     'Team'
   ];
+  
 
   @override
   void initState() {
@@ -245,11 +248,11 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Repeat Dropdown
             DropdownButtonFormField<String>(
-              value: _selectedRepeat,
+              initialValue: _selectedRepeat,
               decoration: InputDecoration(
                 labelText: 'Ponavljanje',
                 border: OutlineInputBorder(
@@ -257,7 +260,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 ),
                 prefixIcon: Icon(Icons.repeat),
               ),
-              items: [
+              items: const [
                 DropdownMenuItem(value: null, child: Text('Bez ponavljanja')),
                 DropdownMenuItem(value: 'daily', child: Text('Dnevno')),
                 DropdownMenuItem(value: 'weekdays', child: Text('Radni dani')),
@@ -275,7 +278,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
             SizedBox(height: 24),
 
             // Assignees Section
-            Text(
+            const Text(
               'Dodijeli članovima',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
@@ -297,7 +300,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                           _selectedAssignees.remove(assignee);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text('Mora biti najmanje jedan član'),
                               duration: Duration(seconds: 2),
                             ),
@@ -448,7 +451,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
           priority: _selectedPriority,
           deadline: _selectedDeadline,
           repeat: _selectedRepeat,
-          sectionId: _selectedSectionId,
+          sectionId: widget.sectionId,
           assigneeIds: _selectedAssignees,
           groupId: widget.groupId,
           taskType: _selectedTaskType,
@@ -460,7 +463,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
         widget.task!.priority = _selectedPriority;
         widget.task!.deadline = _selectedDeadline;
         widget.task!.repeat = _selectedRepeat;
-        widget.task!.sectionId = _selectedSectionId;
+        widget.task!.sectionId = widget.sectionId;
         widget.task!.assigneeIds = _selectedAssignees;
         widget.task!.type = _selectedTaskType;
       }

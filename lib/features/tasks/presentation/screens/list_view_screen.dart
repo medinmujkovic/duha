@@ -1,8 +1,7 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
+import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/projects/data/models/section_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/presentation/screens/add_edit_task_screen.dart';
-import 'package:duha_app/features/tasks/presentation/screens/task_detail_screen.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +12,6 @@ class CustomListView extends StatefulWidget {
 
 class _CustomListViewState extends State<CustomListView> {
   final DataService _dataService = DataService();
-  String? _selectedSectionId;
-
   @override
   Widget build(BuildContext context) {
     final sections = _dataService.getSections();
@@ -70,13 +67,13 @@ class _CustomListViewState extends State<CustomListView> {
                   subtitle: Text('${sectionTasks.length} tasks'),
                   trailing: PopupMenuButton(
                     itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Text('Rename'),
+                      const PopupMenuItem(
                         value: 'rename',
+                        child: Text('Rename'),
                       ),
-                      PopupMenuItem(
-                        child: Text('Delete'),
+                      const PopupMenuItem(
                         value: 'delete',
+                        child: Text('Delete'),
                       ),
                     ],
                     onSelected: (value) {
@@ -92,13 +89,7 @@ class _CustomListViewState extends State<CustomListView> {
                     ...sectionTasks.map((task) => TaskCard(
                           task: task,
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    TaskDetailScreen(task: task),
-                              ),
-                            );
+                            showTaskDetail(context,_dataService, task, sectionId: section.id);
                           },
                           onToggle: () {
                             setState(() {
@@ -111,13 +102,8 @@ class _CustomListViewState extends State<CustomListView> {
                       padding: EdgeInsets.all(16),
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddEditTaskScreen(sectionId: section.id),
-                            ),
-                          );
+                          print(section.id);
+                          showTaskCreate(context, null, sectionId: section.id);
                         },
                         icon: Icon(Icons.add),
                         label: Text('Add Task'),
@@ -132,10 +118,7 @@ class _CustomListViewState extends State<CustomListView> {
             ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AddEditTaskScreen()),
-          );
+          showTaskCreate(context, null);
         },
       ),
     );

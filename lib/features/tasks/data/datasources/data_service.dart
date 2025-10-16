@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/projects/data/models/project_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model.dart';
@@ -99,7 +101,7 @@ class DataService {
 
   void addSection(String name) {
     _sections.add(SectionModel(
-      id: DateTime.now().toString(),
+      id: Random().nextInt(100000).toString(),
       name: name,
       order: _sections.length,
     ));
