@@ -1,0 +1,187 @@
+import 'package:duha_app/core/util/task_utils.dart';
+import 'package:duha_app/features/groups/presentation/widgets/info_card.dart';
+import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:flutter/material.dart';
+
+class TaskDetailSheet extends StatefulWidget {
+  final Task task;
+  final ScrollController scrollController;
+
+  const TaskDetailSheet({
+    super.key,
+    required this.task,
+    required this.scrollController,
+    required DataService dataService,
+    String? sectionId,
+  });
+
+  @override
+  State<TaskDetailSheet> createState() => _TaskDetailSheetState();
+}
+
+class _TaskDetailSheetState extends State<TaskDetailSheet> {
+  late List<Subtask> _subtasks;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _subtasks = List.from(widget.task.subtasks);
+  }
+
+  void _toggleSubtask(int index) {
+    setState(() {
+      _subtasks[index] =
+          _subtasks[index].copyWith(isCompleted: !_subtasks[index].isCompleted);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final completedCount = _subtasks.where((s) => s.isCompleted).length;
+    final progress =
+        _subtasks.isEmpty ? 0.0 : completedCount / _subtasks.length;
+
+    return Container(
+      padding: EdgeInsets.all(24),
+      child: ListView(
+        controller: widget.scrollController,
+        children: [
+          // Handle bar
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          SizedBox(height: 24),
+
+          // Title
+          Text(
+            widget.task.title,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+
+          // Description
+          if (widget.task.description != null) ...[
+            Text(
+              widget.task.description!,
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ),
+            SizedBox(height: 24),
+          ],
+
+          // Progress (if has subtasks)
+          if (_subtasks.isNotEmpty) ...[
+            Text(
+              'Progres',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 12,
+                backgroundColor: Colors.grey[200],
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  progress == 1.0 ? Colors.green : Colors.blue,
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              '$completedCount/${_subtasks.length} podzadataka završeno (${(progress * 100).toInt()}%)',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            SizedBox(height: 24),
+
+            // Subtasks list
+            Text(
+              'Podzadaci',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 12),
+            ..._subtasks.asMap().entries.map((entry) {
+              final index = entry.key;
+              final subtask = entry.value;
+              return CheckboxListTile(
+                value: subtask.isCompleted,
+                onChanged: (_) => _toggleSubtask(index),
+                title: Text(
+                  subtask.title,
+                  style: TextStyle(
+                    decoration:
+                        subtask.isCompleted ? TextDecoration.lineThrough : null,
+                    color: subtask.isCompleted ? Colors.grey : null,
+                  ),
+                ),
+                contentPadding: EdgeInsets.zero,
+              );
+            }).toList(),
+            SizedBox(height: 24),
+          ],
+
+          // Info cards
+          Row(
+            children: [
+              Expanded(
+                child: InfoCard(
+                  icon: Icons.calendar_today,
+                  label: 'Rok',
+                  value: widget.task.deadline != null
+                      ? '${widget.task.deadline!.day}/${widget.task.deadline!.month}'
+                      : 'Nema',
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: InfoCard(
+                  icon: Icons.priority_high,
+                  label: 'Prioritet',
+                  value: widget.task.priority.name,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 24),
+
+          // Action buttons
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    showTaskCreate(context, null, task: widget.task);
+                  },
+                  icon: Icon(Icons.edit),
+                  label: Text('Uredi'),
+                ),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Zadatak označen kao završen')),
+                    );
+                  },
+                  icon: Icon(Icons.check),
+                  label: Text('Završi'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
