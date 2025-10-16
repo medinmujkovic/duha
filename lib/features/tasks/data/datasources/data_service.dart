@@ -127,4 +127,9 @@ class DataService {
       isShared: true,
     ));
   }
+
+  void addGroupMembers(String groupId, List<String> memberIds) {
+    final group = _groups.firstWhere((g) => g.id == groupId);
+    group.memberIds.addAll(memberIds);
+  }
 }
