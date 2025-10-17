@@ -1,3 +1,4 @@
+import 'package:duha_app/features/auth/presentation/widgets/auth_passwordstrengthindicator_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,20 +16,24 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Access to bloc
     return BlocProvider(
       create: (_) => AuthBloc(),
       child: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          //Login Success
           if (state.isSuccess) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (_) => MainScreen()),
             );
           }
+          // Password reset email sent
           if (state is PasswordResetEmailSent) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Password reset email sent!")),
             );
+          // Auth error
           } else if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
@@ -54,6 +59,7 @@ class AuthScreen extends StatelessWidget {
                   constraints: const BoxConstraints(maxWidth: 600),
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
+                    // Auth form
                     child: Card(
                       elevation: 8,
                       shape: RoundedRectangleBorder(
@@ -62,8 +68,8 @@ class AuthScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 40, vertical: 48),
+                        //Listens to AuthBloc state changes/builds what user sees
                         child: BlocBuilder<AuthBloc, AuthState>(
-                          // <-- removed 'bloc: context.read<AuthBloc>()'
                           builder: (context, state) {
                             final bloc = context.read<AuthBloc>();
                             final strength = state.passwordStrength ?? 0;
@@ -73,7 +79,6 @@ class AuthScreen extends StatelessWidget {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // Logo
                                   SvgPicture.asset(
                                     'assets/img/logo.svg',
                                     height: 100,
@@ -97,7 +102,7 @@ class AuthScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 32),
 
-                                  // Toggle buttons
+                                  // Toggle buttons (Login/Register)
                                   Row(
                                     children: [
                                       Expanded(
@@ -135,9 +140,10 @@ class AuthScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 24),
 
-                                  // Name field for registration
+                                  // Name field (registration only)
                                   if (!state.isLogin) ...[
                                     TextFormField(
+                                      controller: _nameController,
                                       onChanged: (v) =>
                                           bloc.add(AuthNameChanged(v)),
                                       decoration: InputDecoration(
@@ -148,14 +154,22 @@ class AuthScreen extends StatelessWidget {
                                         ),
                                         prefixIcon: const Icon(Icons.person),
                                       ),
+                                      validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your Full Name';
+                                      }
+                                      return null;
+                                    },
                                     ),
                                     const SizedBox(height: 16),
                                   ],
 
                                   // Email field
                                   TextFormField(
+                                    controller: _emailController,
                                     onChanged: (v) =>
                                         bloc.add(AuthEmailChanged(v)),
+                                    keyboardType: TextInputType.emailAddress,
                                     decoration: InputDecoration(
                                       labelText: 'Email',
                                       border: OutlineInputBorder(
@@ -163,13 +177,25 @@ class AuthScreen extends StatelessWidget {
                                       ),
                                       prefixIcon: const Icon(Icons.email),
                                     ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your email';
+                                      }
+                                      if (!AuthBloc.isValidEmail(value)) {
+                                        return 'Enter a valid email';
+                                      }
+                                      return null;
+                                    },
+
                                   ),
                                   const SizedBox(height: 16),
 
                                   // Password field
                                   TextFormField(
+                                    controller: _passwordController,
                                     onChanged: (v) =>
                                         bloc.add(AuthPasswordChanged(v)),
+                                    keyboardType: TextInputType.visiblePassword,
                                     obscureText: true,
                                     decoration: InputDecoration(
                                       labelText: 'Password',
@@ -178,25 +204,21 @@ class AuthScreen extends StatelessWidget {
                                       ),
                                       prefixIcon: const Icon(Icons.lock),
                                     ),
+                                   validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your password';
+                                      }
+                                      if (!AuthBloc.isPasswordValid(value)) {
+                                        return 'Enter a valid password';
+                                      }
+                                      return null;
+                                    },
                                   ),
 
                                   // Password strength
-                                  if (state.password.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 8.0, bottom: 12),
-                                      child: LinearProgressIndicator(
-                                        value: (strength / 4).clamp(0, 1),
-                                        color: [
-                                          Colors.red,
-                                          Colors.orange,
-                                          Colors.yellow,
-                                          Colors.green
-                                        ][strength.clamp(0, 3)],
-                                        backgroundColor: Colors.grey[300],
-                                        minHeight: 6,
-                                      ),
-                                    ),
+                                  PasswordStrengthIndicator(password: state.password),
+
+                                  const SizedBox(height: 15),
 
                                   // Error message
                                   if (state.errorMessage != null)
@@ -216,7 +238,12 @@ class AuthScreen extends StatelessWidget {
                                     child: ElevatedButton(
                                       onPressed: state.isSubmitting
                                           ? null
-                                          : () => bloc.add(SubmitAuthForm()),
+                                          : () {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                bloc.add(SubmitAuthForm());
+                                              }
+                                            },
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
                                             const Color(0xFF7C3AED),
@@ -241,13 +268,38 @@ class AuthScreen extends StatelessWidget {
                                             ),
                                     ),
                                   ),
-
-                                  // Forgot password button
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      bloc.add(ForgotPassword());
-                                    },
-                                    child: const Text("Send Reset Email"),
+                                  const SizedBox(height: 10),
+                                  // Forgot password button (validate email)
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          bloc.add(ForgotPassword());
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    "Enter a valid email")),
+                                          );
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFF7C3AED),
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                      ),
+                                      child: const Text("Send Password Reset Email",style:
+                                                  TextStyle(fontSize: 16),),
+                                      
+                                    ),
                                   ),
 
                                   // Info message
@@ -260,6 +312,8 @@ class AuthScreen extends StatelessWidget {
                                             color: Colors.green, fontSize: 14),
                                       ),
                                     ),
+
+                                    
                                 ],
                               ),
                             );
