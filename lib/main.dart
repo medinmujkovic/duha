@@ -15,7 +15,7 @@ class DuhaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Project Nova',
+      title: 'Duha App',
       theme: ThemeData(
         primarySwatch: Colors.purple,
         useMaterial3: true,

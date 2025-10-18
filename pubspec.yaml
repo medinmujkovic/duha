@@ -7,11 +7,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # UI & State Management
-  cupertino_icons: ^1.0.2
-  provider: ^6.0.5
   flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.4 
+  provider: ^6.0.5
 
   # Notifications
   flutter_local_notifications: ^16.3.0
@@ -41,9 +41,8 @@ dependencies:
   intl: ^0.18.1
 
   # Models & Serialization
-  freezed_annotation: ^2.4.4   # ← MUST MATCH freezed
+  freezed_annotation: ^2.4.4
   json_annotation: ^4.9.0
-  riverpod_annotation: ^2.6.1
 
   # Routing
   go_router: ^14.2.0
@@ -55,20 +54,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
-  analyzer_plugin: ^0.13.0
 
   # Code Generation
-  build_runner: ^2.5.0
+  build_runner: ^2.4.8
+  riverpod_generator: ^2.3.9   
   freezed: ^2.5.7
-  json_serializable: ^6.6.0
-  riverpod_generator: ^2.3.9
-  custom_lint: ^0.7.3
-  riverpod_lint: ^2.3.7
+  json_serializable: ^6.8.0
   flutter_lints: ^4.0.0
-
-
-flutter:
-  uses-material-design: true
-  assets:
-    - assets/img/logo.svg
-  generate: true

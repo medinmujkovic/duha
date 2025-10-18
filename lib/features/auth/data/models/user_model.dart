@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../models/user_model.dart';
 
-part 'user_provider.g.dart'; // Generated file
 
 class UserModel {
   final String id;
@@ -40,37 +40,5 @@ class UserModel {
       xp: xp ?? this.xp,
       streak: streak ?? this.streak,
     );
-  }
-}
-
-@riverpod
-class UserNotifier extends _$UserNotifier {
-  @override
-  UserModel? build() {
-    // Initially no user is logged in
-    return null;
-  }
-
-  void setUser(UserModel user) {
-    state = user;
-  }
-
-  void clearUser() {
-    state = null;
-  }
-
-  void updateXp(int xp) {
-    if (state == null) return;
-    state = state!.copyWith(xp: state!.xp + xp);
-  }
-
-  void updateLevel(int level) {
-    if (state == null) return;
-    state = state!.copyWith(level: level);
-  }
-
-  void updateStreak(int streak) {
-    if (state == null) return;
-    state = state!.copyWith(streak: streak);
   }
 }
