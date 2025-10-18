@@ -173,6 +173,22 @@ class Auth extends _$Auth {
     if (RegExp(r'[!@#\$&*~]').hasMatch(password)) score++;
     return score;
   }
+   Future<void> logout() async {
+    // Reset all fields
+    state = const AuthState(
+      isLogin: true,       // go back to login mode
+      email: '',
+      password: '',
+      name: '',
+      errorMessage: null,
+      infoMessage: 'Logged out successfully',
+      isSubmitting: false,
+      isValid: false,
+      passwordStrength: 0,
+      isSuccess: false,
+    );
+    
+  }
 }
 
 // Optional: Convenience providers for specific state properties

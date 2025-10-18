@@ -16,11 +16,12 @@ class DuhaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Duha App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.purple,
         useMaterial3: true,
       ),
-      home: AuthScreen(), 
+      home: const AuthScreen(), 
     );
   }
 }
