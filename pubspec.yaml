@@ -12,58 +12,60 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   flutter_riverpod: ^2.5.1
-  
+
   # Notifications
   flutter_local_notifications: ^16.3.0
   timezone: ^0.9.2
-  
+
   # Storage & Backend
   shared_preferences: ^2.2.2
   sqflite: ^2.3.0
   path_provider: ^2.1.1
-  
-  # Firebase (for real backend)
-  # Core
+
+  # Firebase
   firebase_core: ^3.6.0
-  # Auth
   firebase_auth: ^5.3.1
-  # Firestore
   cloud_firestore: ^5.4.4
-  # Storage
   firebase_storage: ^12.3.3
-  
+
   # File handling
   file_picker: ^6.1.1
   image_picker: ^1.0.7
-  
+
   # Share functionality
   share_plus: ^7.2.1
   url_launcher: ^6.2.2
-  
+
   # Charts & Analytics
   fl_chart: ^0.66.0
   intl: ^0.18.1
 
-  # Models & Serialization - ANNOTATIONS (runtime)
-  freezed_annotation: ^2.4.4  # ← DODAJ
-  json_annotation: ^4.9.0     # ← DODAJ
-  
+  # Models & Serialization
+  freezed_annotation: ^2.4.4   # ← MUST MATCH freezed
+  json_annotation: ^4.9.0
+  riverpod_annotation: ^2.6.1
+
   # Routing
-  go_router: ^14.2.0          # ← DODAJ
+  go_router: ^14.2.0
 
   flutter_svg: ^2.0.9
-  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
+  analyzer_plugin: ^0.13.0
 
-  # Code Generation - DEV ONLY
-  build_runner: ^2.4.12       # ← DODAJ
-  freezed: ^2.5.7             # ← PREMJESTI iz dependencies!
-  json_serializable: ^6.8.0  # ← DODAJ
-  flutter_lints: ^4.0.0       # ← DODAJ (optional, ali preporučeno)
+  # Code Generation
+  build_runner: ^2.5.0
+  freezed: ^2.5.7
+  json_serializable: ^6.6.0
+  riverpod_generator: ^2.3.9
+  custom_lint: ^0.7.3
+  riverpod_lint: ^2.3.7
+  flutter_lints: ^4.0.0
+
 
 flutter:
   uses-material-design: true
