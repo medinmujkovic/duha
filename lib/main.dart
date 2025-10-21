@@ -8,6 +8,7 @@ void main() {
       child: DuhaApp(),
     ),
   );
+
 }
 
 class DuhaApp extends StatelessWidget {
