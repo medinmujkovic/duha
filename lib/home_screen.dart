@@ -1,4 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:duha_app/common/widgets/new_task_button.dart';
+import 'package:duha_app/common/widgets/signout_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/filtering/presentation/screens/filter_sheet.dart';
 import 'package:duha_app/features/notifications/presentation/screens/notifications_screen.dart';
@@ -8,6 +11,8 @@ import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -26,14 +31,15 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Duha App', style: TextStyle(fontSize: 20)),
+            const Text('Duha App', style: TextStyle(fontSize: 20)),
             Text('Welcome back, ${user.name}',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal)),
+                style: const TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.normal)),
           ],
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
             onPressed: () {
               Navigator.push(
                 context,
@@ -42,11 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: () {
               _showFilterSheet(context);
             },
           ),
+          const SignOutButton(isIconOnly: true),
         ],
       ),
       body: SingleChildScrollView(
@@ -55,10 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             // Stats Banner
             Container(
-              margin: EdgeInsets.all(16),
-              padding: EdgeInsets.all(20),
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [Color(0xFF7C3AED), Color(0xFF2563EB)],
                 ),
                 borderRadius: BorderRadius.circular(16),
@@ -66,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     '🔥 You\'re crushing it!',
                     style: TextStyle(
                       color: Colors.white,
@@ -74,10 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Keep your ${user.streak}-day streak alive. $incompleteTasks tasks remaining.',
-                    style: TextStyle(color: Colors.white70),
+                    style: const TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
@@ -85,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Stats Grid
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   Expanded(
@@ -96,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Colors.purple,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
                       'Streak',
@@ -105,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Colors.orange,
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
                       'XP',
@@ -118,24 +125,24 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Today's Tasks
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Today\'s Tasks',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   TextButton.icon(
                     onPressed: () {
-                      showTaskCreate(context,null);
+                      showTaskCreate(context, null);
                     },
-                    icon: Icon(Icons.add),
-                    label: Text('Add'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Add'),
                   ),
                 ],
               ),
@@ -143,8 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               itemCount: tasks.where((t) => !t.isCompleted).take(5).length,
               itemBuilder: (context, index) {
                 final task = tasks.where((t) => !t.isCompleted).toList()[index];
@@ -170,15 +177,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: AddTaskButton(onPressed:  () {
-        showTaskCreate(context,null);
-      },),
+      floatingActionButton: AddTaskButton(
+        onPressed: () {
+          showTaskCreate(context, null);
+        },
+      ),
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
@@ -187,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         children: [
           Icon(icon, color: color, size: 28),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             value,
             style: TextStyle(
@@ -196,7 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: color,
             ),
           ),
-          Text(label, style: TextStyle(color: Colors.grey, fontSize: 12)),
+          Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
         ],
       ),
     );
@@ -206,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => FilterSheet(),
