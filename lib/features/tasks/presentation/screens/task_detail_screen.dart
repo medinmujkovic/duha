@@ -1,7 +1,7 @@
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
-import 'package:duha_app/features/tasks/data/models/subtask_model.dart';
+import 'package:duha_app/features/tasks/data/models/subtask/subtask_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_comment.dart';
 import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';

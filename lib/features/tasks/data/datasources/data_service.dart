@@ -1,8 +1,9 @@
 import 'dart:math';
 
 import 'package:duha_app/features/auth/data/models/user_model.dart';
-import 'package:duha_app/features/projects/data/models/project_model.dart';
-import 'package:duha_app/features/projects/data/models/section_model.dart';
+import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
+import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
+import 'package:duha_app/features/projects/data/models/user_activity_model/user_activity_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
 
@@ -37,7 +38,52 @@ class DataService {
   List<SectionModel> getSections() =>
       _sections..sort((a, b) => a.order.compareTo(b.order));
 
-  List<GroupModel> getGroups() => _groups;
+  List<GroupModel> getGroups(String id) => _groups.where((g) => g.memberIds.contains(id)).toList();
+
+  List<UserActivity> getLeaderboard(String id ) {
+    final userActivities = <UserActivity>[];
+
+    for (var group in getGroups(id)) {
+      for (var memberId in group.memberIds) {
+        // Simulate fetching user activity data
+        userActivities.add(UserActivity(
+          id: memberId,
+          username: 'User $memberId',
+          groupId: group.id,
+          userId: memberId,
+          xp: Random().nextInt(5000).toString(),
+          level: Random().nextInt(20).toString(),
+          streak: Random().nextInt(30).toString(),
+        ));
+      }
+    }
+
+    userActivities.sort((a, b) => int.parse(b.xp).compareTo(int.parse(a.xp)));
+
+    return userActivities;
+
+  }
+
+  List<UserActivity> getRecentActivities() {
+    final activities = <UserActivity>[];
+
+    // Simulate recent activities
+    for (int i = 0; i < 10; i++) {
+      activities.add(UserActivity(
+        id: 'activity_$i',
+        username: 'User ${i + 1}',
+        groupId: 'group_1',
+        userId: 'user_${Random().nextInt(5) + 1}',
+        xp: Random().nextInt(500).toString(),
+        level: Random().nextInt(20).toString(),
+        streak: Random().nextInt(30).toString(),
+      ));
+    }
+
+    return activities;
+  }
+
+
 
   void addTask({
     required String title,
@@ -132,4 +178,7 @@ class DataService {
     final group = _groups.firstWhere((g) => g.id == groupId);
     group.memberIds.addAll(memberIds);
   }
+
+  getUserName(String id) {}
+
 }

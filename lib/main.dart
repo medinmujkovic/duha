@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/auth/presentation/screens/auth_screen.dart';
 
 void main() {
-  runApp(DuhaApp());
+  runApp(ProviderScope(child: DuhaApp(),));
 }
 
 class DuhaApp extends StatelessWidget {
