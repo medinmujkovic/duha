@@ -85,10 +85,10 @@ class GroupTaskCard extends StatelessWidget {
               ),
 
               ...[
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
-                task.description!,
-                style: TextStyle(color: const Color.fromARGB(255, 68, 25, 25)),
+                task.description,
+                style: const TextStyle(color: Color.fromARGB(255, 68, 25, 25)),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

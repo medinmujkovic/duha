@@ -72,10 +72,10 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
           // Description
           ...[
           Text(
-            widget.task.description!,
+            widget.task.description,
             style: TextStyle(fontSize: 16, color: Colors.grey[700]),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
         ],
 
           // Progress (if has subtasks)
