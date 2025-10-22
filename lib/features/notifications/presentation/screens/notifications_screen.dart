@@ -28,15 +28,17 @@ class NotificationsScreen extends StatelessWidget {
     },
   ];
 
+  const NotificationsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notifications'),
+        title: const Text('Notifications'),
         actions: [
           TextButton(
             onPressed: () {},
-            child: Text('Mark all read'),
+            child: const Text('Mark all read'),
           ),
         ],
       ),
@@ -51,7 +53,7 @@ class NotificationsScreen extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: notif['unread'] ? Color(0xFF7C3AED) : Colors.transparent,
+                  color: notif['unread'] ? const Color(0xFF7C3AED) : Colors.transparent,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -65,10 +67,10 @@ class NotificationsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(notif['message']),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     notif['time'],
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),

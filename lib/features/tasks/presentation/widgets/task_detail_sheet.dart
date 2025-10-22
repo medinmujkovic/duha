@@ -45,7 +45,7 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
         _subtasks.isEmpty ? 0.0 : completedCount / _subtasks.length;
 
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: ListView(
         controller: widget.scrollController,
         children: [
@@ -60,31 +60,31 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
               ),
             ),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           // Title
           Text(
             widget.task.title,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Description
-          if (widget.task.description != null) ...[
-            Text(
-              widget.task.description!,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-            ),
-            SizedBox(height: 24),
-          ],
+          ...[
+          Text(
+            widget.task.description!,
+            style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+          ),
+          SizedBox(height: 24),
+        ],
 
           // Progress (if has subtasks)
           if (_subtasks.isNotEmpty) ...[
-            Text(
+            const Text(
               'Progres',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: LinearProgressIndicator(
@@ -96,19 +96,19 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               '$completedCount/${_subtasks.length} podzadataka završeno (${(progress * 100).toInt()}%)',
               style: TextStyle(color: Colors.grey[600]),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Subtasks list
-            Text(
+            const Text(
               'Podzadaci',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             ..._subtasks.asMap().entries.map((entry) {
               final index = entry.key;
               final subtask = entry.value;
@@ -125,8 +125,8 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
                 ),
                 contentPadding: EdgeInsets.zero,
               );
-            }).toList(),
-            SizedBox(height: 24),
+            }),
+            const SizedBox(height: 24),
           ],
 
           // Info cards
@@ -141,7 +141,7 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
                       : 'Nema',
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: InfoCard(
                   icon: Icons.priority_high,
@@ -151,7 +151,7 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
               ),
             ],
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           // Action buttons
           Row(
@@ -161,21 +161,21 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
                   onPressed: () {
                     showTaskCreate(context, null, task: widget.task);
                   },
-                  icon: Icon(Icons.edit),
-                  label: Text('Uredi'),
+                  icon: const Icon(Icons.edit),
+                  label: const Text('Uredi'),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: FilledButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Zadatak označen kao završen')),
+                      const SnackBar(content: Text('Zadatak označen kao završen')),
                     );
                   },
-                  icon: Icon(Icons.check),
-                  label: Text('Završi'),
+                  icon: const Icon(Icons.check),
+                  label: const Text('Završi'),
                 ),
               ),
             ],

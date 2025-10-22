@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/auth_notifier.dart';
-import '../providers/auth_state.dart';
+import '../states/auth_state.dart';
 
 class AuthToggleButtons extends ConsumerWidget {
   final AuthState authState;

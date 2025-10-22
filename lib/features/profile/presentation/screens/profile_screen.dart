@@ -5,22 +5,24 @@ import 'package:flutter/material.dart';
 class ProfileScreen extends StatelessWidget {
   final DataService _dataService = DataService();
 
+  ProfileScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final user = _dataService.getCurrentUser();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {},
           ),
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         children: [
           // Profile Header
           Card(
@@ -28,25 +30,25 @@ class ProfileScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundColor: Color(0xFF7C3AED),
+                    backgroundColor: const Color(0xFF7C3AED),
                     child: Text(
                       user.name[0].toUpperCase(),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     user.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
@@ -55,7 +57,7 @@ class ProfileScreen extends StatelessWidget {
                     user.email,
                     style: TextStyle(color: Colors.grey[600]),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -68,17 +70,17 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // Achievements
-          Text(
+          const Text(
             'Achievements',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           GridView.count(
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 3,
             mainAxisSpacing: 12,
             crossAxisSpacing: 12,
@@ -91,56 +93,56 @@ class ProfileScreen extends StatelessWidget {
               _buildBadge('Master', Icons.workspace_premium, Colors.grey, false),
             ],
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // Settings Options
-          Text(
+          const Text(
             'Settings',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Card(
             child: Column(
               children: [
                 ListTile(
-                  leading: Icon(Icons.notifications),
-                  title: Text('Notifications'),
+                  leading: const Icon(Icons.notifications),
+                  title: const Text('Notifications'),
                   trailing: Switch(
                     value: true,
                     onChanged: (value) {},
                   ),
                 ),
-                Divider(height: 1),
+                const Divider(height: 1),
                 ListTile(
-                  leading: Icon(Icons.dark_mode),
-                  title: Text('Dark Mode'),
+                  leading: const Icon(Icons.dark_mode),
+                  title: const Text('Dark Mode'),
                   trailing: Switch(
                     value: false,
                     onChanged: (value) {},
                   ),
                 ),
-                Divider(height: 1),
+                const Divider(height: 1),
                 ListTile(
-                  leading: Icon(Icons.language),
-                  title: Text('Language'),
-                  trailing: Icon(Icons.chevron_right),
+                  leading: const Icon(Icons.language),
+                  title: const Text('Language'),
+                  trailing: const Icon(Icons.chevron_right),
                   onTap: () {},
                 ),
-                Divider(height: 1),
+                const Divider(height: 1),
                 ListTile(
-                  leading: Icon(Icons.help),
-                  title: Text('Help & Support'),
-                  trailing: Icon(Icons.chevron_right),
+                  leading: const Icon(Icons.help),
+                  title: const Text('Help & Support'),
+                  trailing: const Icon(Icons.chevron_right),
                   onTap: () {},
                 ),
-                Divider(height: 1),
+                const Divider(height: 1),
                 ListTile(
-                  leading: Icon(Icons.logout, color: Colors.red),
-                  title: Text('Logout', style: TextStyle(color: Colors.red)),
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: const Text('Logout', style: TextStyle(color: Colors.red)),
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => AuthScreen()),
+                      MaterialPageRoute(builder: (context) => const AuthScreen()),
                     );
                   },
                 ),
@@ -155,18 +157,18 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStatColumn(String label, String value, IconData icon) {
     return Column(
       children: [
-        Icon(icon, size: 28, color: Color(0xFF7C3AED)),
-        SizedBox(height: 4),
+        Icon(icon, size: 28, color: const Color(0xFF7C3AED)),
+        const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
         ),
       ],
     );
@@ -189,7 +191,7 @@ class ProfileScreen extends StatelessWidget {
             size: 32,
             color: unlocked ? color : Colors.grey[400],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(

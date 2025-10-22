@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/summary_card.dart';
 
 class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
+
   @override
   _HistoryScreenState createState() => _HistoryScreenState();
 }
@@ -33,7 +35,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task History'),
+        title: const Text('Task History'),
         actions: [
           SegmentedButton<String>(
             segments: const [
@@ -142,7 +144,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       }).toList(),
                     ),
                   );
-                }).toList(),
+                }),
 
                 const SizedBox(height: 16),
                 const Text(

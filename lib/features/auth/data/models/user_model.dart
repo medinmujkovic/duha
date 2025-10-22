@@ -1,6 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../models/user_model.dart';
 
 
 class UserModel {
@@ -39,6 +36,29 @@ class UserModel {
       level: level ?? this.level,
       xp: xp ?? this.xp,
       streak: streak ?? this.streak,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'avatar': avatar,
+      'level': level,
+      'xp': xp,
+      'streak': streak,
+    };
+  }
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      email: json['email'] as String,
+      avatar: json['avatar'] as String,
+      level: json['level'] as int? ?? 1,
+      xp: json['xp'] as int? ?? 0,
+      streak: json['streak'] as int? ?? 0,
     );
   }
 }

@@ -5,7 +5,7 @@ class InfoCard extends StatelessWidget {
   final String label;
   final String value;
 
-  const InfoCard({
+  const InfoCard({super.key, 
     required this.icon,
     required this.label,
     required this.value,
@@ -14,7 +14,7 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(12),
@@ -23,15 +23,15 @@ class InfoCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(icon, size: 20, color: Colors.grey[600]),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             label,
             style: TextStyle(fontSize: 12, color: Colors.grey[600]),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ],
       ),
@@ -48,21 +48,21 @@ class CreateTaskDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Novi zadatak'),
-      content: Text('Forma za kreiranje zadatka (TODO)'),
+      title: const Text('Novi zadatak'),
+      content: const Text('Forma za kreiranje zadatka (TODO)'),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text('Otkaži'),
+          child: const Text('Otkaži'),
         ),
         FilledButton(
           onPressed: () {
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Zadatak kreiran')),
+              const SnackBar(content: Text('Zadatak kreiran')),
             );
           },
-          child: Text('Kreiraj'),
+          child: const Text('Kreiraj'),
         ),
       ],
     );

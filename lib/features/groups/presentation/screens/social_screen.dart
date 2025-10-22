@@ -4,6 +4,8 @@ import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
 
 class SocialScreen extends StatefulWidget {
+  const SocialScreen({super.key});
+
   @override
   _SocialScreenState createState() => _SocialScreenState();
 }
@@ -23,10 +25,10 @@ class _SocialScreenState extends State<SocialScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Community'),
+        title: const Text('Community'),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: 'Feed'),
             Tab(text: 'Leaderboard'),
             Tab(text: 'Groups'),
@@ -83,47 +85,47 @@ class _SocialScreenState extends State<SocialScreen>
     ];
 
     return ListView.builder(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       itemCount: activities.length,
       itemBuilder: (context, index) {
         final activity = activities[index];
         return Card(
-          margin: EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Color(0xFF7C3AED),
+              backgroundColor: const Color(0xFF7C3AED),
               child: Text(
                 activity['user'].toString()[0],
                 style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
             title: RichText(
               text: TextSpan(
-                style: TextStyle(color: Colors.black, fontSize: 14),
+                style: const TextStyle(color: Colors.black, fontSize: 14),
                 children: [
                   TextSpan(
                     text: '${activity['user']} ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(text: '${activity['action']} '),
                   if (activity.containsKey('task'))
                     TextSpan(
                       text: activity['task'].toString(),
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   if (activity.containsKey('milestone'))
                     TextSpan(
                       text: activity['milestone'].toString(),
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   if (activity.containsKey('level'))
                     TextSpan(
                       text: 'to level ${activity['level']}',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                 ],
               ),
@@ -132,8 +134,8 @@ class _SocialScreenState extends State<SocialScreen>
               children: [
                 Text(activity['time'].toString()),
                 if (activity.containsKey('xp')) ...[
-                  SizedBox(width: 12),
-                  Icon(Icons.star, size: 14, color: Colors.amber),
+                  const SizedBox(width: 12),
+                  const Icon(Icons.star, size: 14, color: Colors.amber),
                   Text(
                     ' +${activity['xp']} XP',
                     style: TextStyle(
@@ -145,7 +147,7 @@ class _SocialScreenState extends State<SocialScreen>
               ],
             ),
             trailing: IconButton(
-              icon: Icon(Icons.favorite_border),
+              icon: const Icon(Icons.favorite_border),
               onPressed: () {},
             ),
           ),
@@ -164,7 +166,7 @@ class _SocialScreenState extends State<SocialScreen>
     ];
 
     return ListView.builder(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       itemCount: leaderboard.length,
       itemBuilder: (context, index) {
         final user = leaderboard[index];
@@ -176,7 +178,7 @@ class _SocialScreenState extends State<SocialScreen>
         if (rank == 3) medalColor = Colors.orange[300];
 
         return Card(
-          margin: EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -201,14 +203,14 @@ class _SocialScreenState extends State<SocialScreen>
             ),
             title: Text(
               user['name'].toString(),
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             subtitle: Row(
               children: [
-                Icon(Icons.star, size: 14, color: Colors.amber),
+                const Icon(Icons.star, size: 14, color: Colors.amber),
                 Text(' ${user['xp']} XP'),
-                SizedBox(width: 12),
-                Icon(Icons.local_fire_department,
+                const SizedBox(width: 12),
+                const Icon(Icons.local_fire_department,
                     size: 14, color: Colors.orange),
                 Text(' ${user['streak']}d'),
               ],
@@ -216,10 +218,10 @@ class _SocialScreenState extends State<SocialScreen>
             trailing: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
+                const Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
                 Text(
                   'Lvl ${user['level']}',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -233,36 +235,36 @@ class _SocialScreenState extends State<SocialScreen>
     final groups = _dataService.getGroups();
 
     return ListView(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       children: [
         Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Share Your Group',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Invite team members to collaborate on your groups',
                   style: TextStyle(color: Colors.grey[600]),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 ElevatedButton.icon(
                   onPressed: () => _showCreateGroupDialog(context),
-                  icon: Icon(Icons.add),
-                  label: Text('Create New Group'),
+                  icon: const Icon(Icons.add),
+                  label: const Text('Create New Group'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF7C3AED),
+                    backgroundColor: const Color(0xFF7C3AED),
                     foregroundColor: Colors.white,
                   ),
                 ),
@@ -270,15 +272,15 @@ class _SocialScreenState extends State<SocialScreen>
             ),
           ),
         ),
-        SizedBox(height: 16),
-        Text(
+        const SizedBox(height: 16),
+        const Text(
           'Your Groups',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        SizedBox(height: 12),
+        const SizedBox(height: 12),
         ...groups.map((group) {
           return Card(
-            margin: EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -300,27 +302,27 @@ class _SocialScreenState extends State<SocialScreen>
                     color: _getColorFromString(group.color),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.folder, color: Colors.white),
+                  child: const Icon(Icons.folder, color: Colors.white),
                 ),
                 title: Text(
                   group.name,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Row(
                   children: [
-                    Icon(Icons.people, size: 14),
-                    SizedBox(width: 4),
+                    const Icon(Icons.people, size: 14),
+                    const SizedBox(width: 4),
                     Text('${group.memberIds.length} members'),
                   ],
                 ),
                 trailing: IconButton(
-                  icon: Icon(Icons.share),
+                  icon: const Icon(Icons.share),
                   onPressed: () => _showShareDialog(context, group),
                 ),
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -349,7 +351,7 @@ class _SocialScreenState extends State<SocialScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Create New Group'),
+        title: const Text('Create New Group'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -362,9 +364,9 @@ class _SocialScreenState extends State<SocialScreen>
                 ),
               ),
             ),
-            SizedBox(height: 16),
-            Text('Select Color'),
-            SizedBox(height: 8),
+            const SizedBox(height: 16),
+            const Text('Select Color'),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               children:
@@ -387,7 +389,7 @@ class _SocialScreenState extends State<SocialScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -397,7 +399,7 @@ class _SocialScreenState extends State<SocialScreen>
                 setState(() {});
               }
             },
-            child: Text('Create'),
+            child: const Text('Create'),
           ),
         ],
       ),
@@ -408,34 +410,34 @@ class _SocialScreenState extends State<SocialScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Share Group'),
+        title: const Text('Share Group'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Share this link with your team:'),
-            SizedBox(height: 16),
+            const Text('Share this link with your team:'),
+            const SizedBox(height: 16),
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.grey[100],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: SelectableText(
                 group.shareLink,
-                style: TextStyle(fontFamily: 'monospace'),
+                style: const TextStyle(fontFamily: 'monospace'),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Link copied to clipboard!')),
+                  const SnackBar(content: Text('Link copied to clipboard!')),
                 );
               },
-              icon: Icon(Icons.copy),
-              label: Text('Copy Link'),
+              icon: const Icon(Icons.copy),
+              label: const Text('Copy Link'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF7C3AED),
+                backgroundColor: const Color(0xFF7C3AED),
                 foregroundColor: Colors.white,
               ),
             ),
@@ -444,7 +446,7 @@ class _SocialScreenState extends State<SocialScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Close'),
+            child: const Text('Close'),
           ),
         ],
       ),
