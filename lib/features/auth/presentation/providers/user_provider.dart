@@ -1,4 +1,6 @@
 // lib/providers/user_provider.dart
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -28,7 +28,7 @@ class NotificationsScreen extends StatelessWidget {
     },
   ];
 
-  const NotificationsScreen({super.key});
+  NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
