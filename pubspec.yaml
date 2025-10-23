@@ -29,7 +29,7 @@ dependencies:
   firebase_storage: ^12.3.3
 
   # File handling
-  file_picker: ^6.1.1
+  file_picker: ^6.2.1
   image_picker: ^1.0.7
 
   # Share functionality

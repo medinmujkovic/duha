@@ -3,11 +3,14 @@ import 'package:duha_app/features/notifications/data/datasources/notification_se
 import 'package:duha_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:duha_app/features/projects/presentation/screens/history_screen.dart';
 import 'package:duha_app/features/tasks/presentation/screens/list_view_screen.dart';
-import 'package:duha_app/home_screen.dart';
+import 'package:duha_app/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _MainScreenState createState() => _MainScreenState();
 }
 
@@ -22,10 +25,10 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   final List<Widget> _screens = [
-    HomeScreen(),
-    CustomListView(),
-    SocialScreen(),
-    HistoryScreen(),
+    const HomeScreen(),
+    const CustomListView(),
+    const SocialScreen(),
+    const HistoryScreen(),
     ProfileScreen(),
   ];
 

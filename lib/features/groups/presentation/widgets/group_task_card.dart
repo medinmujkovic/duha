@@ -45,12 +45,12 @@ class GroupTaskCard extends StatelessWidget {
     final hasSubtasks = task.subtasks.isNotEmpty;
 
     return Card(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -84,17 +84,17 @@ class GroupTaskCard extends StatelessWidget {
                 ],
               ),
 
-              if (task.description != null) ...[
-                SizedBox(height: 8),
-                Text(
-                  task.description!,
-                  style: TextStyle(color: const Color.fromARGB(255, 68, 25, 25)),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+              ...[
+              const SizedBox(height: 8),
+              Text(
+                task.description,
+                style: const TextStyle(color: Color.fromARGB(255, 68, 25, 25)),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
 
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
 
               // Progress bar (ako ima subtaskova)
               if (hasSubtasks) ...[
@@ -113,7 +113,7 @@ class GroupTaskCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       '${(progress * 100).toInt()}%',
                       style: TextStyle(
@@ -124,27 +124,27 @@ class GroupTaskCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   '${task.subtasks.where((s) => s.isCompleted).length}/${task.subtasks.length} podzadataka',
                   style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
               ],
 
               // Footer: Assignees + Due date + Type
               Row(
                 children: [
                   // Assignees avatars
-                  if (task.assigneeIds != null && task.assigneeIds!.isNotEmpty)
+                  if (task.assigneeIds.isNotEmpty)
                     SizedBox(
                       width: 80,
                       height: 28,
                       child: Stack(
                         children: List.generate(
-                          task.assigneeIds!.length > 3
+                          task.assigneeIds.length > 3
                               ? 3
-                              : task.assigneeIds!.length,
+                              : task.assigneeIds.length,
                           (index) => Positioned(
                             left: index * 20.0,
                             child: CircleAvatar(
@@ -153,7 +153,7 @@ class GroupTaskCard extends StatelessWidget {
                                   .primaries[index % Colors.primaries.length],
                               child: Text(
                                 'U${index + 1}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 10, color: Colors.white),
                               ),
                             ),
@@ -162,21 +162,21 @@ class GroupTaskCard extends StatelessWidget {
                       ),
                     ),
 
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
 
                   // Due date
-                  Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-                  SizedBox(width: 4),
+                  const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                  const SizedBox(width: 4),
                   Text(
                     _getDueDateText(task.deadline),
                     style: TextStyle(fontSize: 12, color: Colors.grey[700]),
                   ),
 
-                  Spacer(),
+                  const Spacer(),
 
                   // Task type chip
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: task.type == TaskType.allMembers
                           ? Colors.blue.withOpacity(0.1)

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../providers/auth_state.dart';
+import '../states/auth_state.dart';
 
 class AuthMessages extends StatelessWidget {
   final AuthState authState;

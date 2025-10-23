@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget buildSummaryCard(String label, String value, IconData icon, Color color) {
   return Container(
-    padding: EdgeInsets.all(16),
+    padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: color.withOpacity(0.1),
       borderRadius: BorderRadius.circular(12),
@@ -11,7 +11,7 @@ Widget buildSummaryCard(String label, String value, IconData icon, Color color) 
     child: Column(
       children: [
         Icon(icon, color: color, size: 32),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
           value,
           style: TextStyle(
@@ -22,7 +22,7 @@ Widget buildSummaryCard(String label, String value, IconData icon, Color color) 
         ),
         Text(
           label,
-          style: TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
           textAlign: TextAlign.center,
         ),
       ],

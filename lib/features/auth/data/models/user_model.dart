@@ -1,44 +1,35 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/user_model.dart';
 
+part 'user_model.freezed.dart';
+part 'user_model.g.dart'
 
-class UserModel {
-  final String id;
-  final String name;
-  final String email;
-  final String avatar;
-  int level;
-  int xp;
-  int streak;
+@freezed
+class UserModel with _$UserModel {
+  const factory UserModel({
+  required String? id,
+  required String? name,
+  required String? email,
+  required String? avatar,
+  int level,
+  int xp,
+  int streak,
+}) = _UserModel;
 
-  UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.avatar,
-    this.level = 1,
-    this.xp = 0,
-    this.streak = 0,
-  });
+  // Add this constructor for computed properties
+  const UserModel._();
 
-  UserModel copyWith({
-    String? id,
-    String? name,
-    String? email,
-    String? avatar,
-    int? level,
-    int? xp,
-    int? streak,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      avatar: avatar ?? this.avatar,
-      level: level ?? this.level,
-      xp: xp ?? this.xp,
-      streak: streak ?? this.streak,
-    );
-  }
+  // Computed property
+  bool get isAuthenticated => userId != null;
+
+  // Factory for empty/unauthenticated user
+  factory UserModel.empty() => const UserModel(
+        id: null,
+        email: null,
+        name: null,
+        avatar: null,
+      );
+
 }
