@@ -7,7 +7,7 @@ class TaskCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onToggle;
 
-  const TaskCard({
+  const TaskCard({super.key, 
     required this.task,
     required this.onTap,
     required this.onToggle,
@@ -18,13 +18,13 @@ class TaskCard extends StatelessWidget {
     final priorityColor = getPriorityColor(task.priority);
 
     return Card(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -65,7 +65,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: priorityColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -85,9 +85,9 @@ class TaskCard extends StatelessWidget {
 
               // Multi-assignee progress
               if (task.assigneeIds.length > 1) ...[
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.blue[50],
                     borderRadius: BorderRadius.circular(8),
@@ -99,7 +99,7 @@ class TaskCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.people, size: 16, color: Colors.blue[700]),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Text(
                             'Team Task - ${task.completedByIds.length}/${task.assigneeIds.length} completed',
                             style: TextStyle(
@@ -110,13 +110,13 @@ class TaskCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: task.completionProgress,
                           backgroundColor: Colors.grey[300],
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                          valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
                           minHeight: 6,
                         ),
                       ),
@@ -127,11 +127,11 @@ class TaskCard extends StatelessWidget {
 
               // Subtasks progress
               if (task.subtasks.isNotEmpty) ...[
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.check_circle_outline, size: 14, color: Colors.grey),
-                    SizedBox(width: 6),
+                    const Icon(Icons.check_circle_outline, size: 14, color: Colors.grey),
+                    const SizedBox(width: 6),
                     Text(
                       '${task.completedSubtasksCount}/${task.subtasks.length} subtasks',
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
@@ -141,29 +141,29 @@ class TaskCard extends StatelessWidget {
               ],
 
               // Bottom info
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 children: [
                   if (task.deadline != null) ...[
-                    Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
+                    const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                    const SizedBox(width: 4),
                     Text(
                       '${task.deadline!.day}/${task.deadline!.month}',
                       style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                   ],
                   if (task.repeat != null) ...[
-                    Icon(Icons.repeat, size: 14, color: Colors.purple),
-                    SizedBox(width: 4),
+                    const Icon(Icons.repeat, size: 14, color: Colors.purple),
+                    const SizedBox(width: 4),
                     Text(
                       task.repeat!,
-                      style: TextStyle(fontSize: 12, color: Colors.purple),
+                      style: const TextStyle(fontSize: 12, color: Colors.purple),
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                   ],
-                  Icon(Icons.star, size: 14, color: Colors.amber),
-                  SizedBox(width: 4),
+                  const Icon(Icons.star, size: 14, color: Colors.amber),
+                  const SizedBox(width: 4),
                   Text(
                     '${task.xpReward} XP',
                     style: TextStyle(
@@ -172,22 +172,22 @@ class TaskCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   if (task.comments.isNotEmpty)
                     Row(
                       children: [
-                        Icon(Icons.comment, size: 14, color: Colors.grey),
-                        SizedBox(width: 4),
+                        const Icon(Icons.comment, size: 14, color: Colors.grey),
+                        const SizedBox(width: 4),
                         Text('${task.comments.length}',
-                            style: TextStyle(fontSize: 12)),
+                            style: const TextStyle(fontSize: 12)),
                       ],
                     ),
                   if (task.attachments.isNotEmpty) ...[
-                    SizedBox(width: 12),
-                    Icon(Icons.attach_file, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.attach_file, size: 14, color: Colors.grey),
+                    const SizedBox(width: 4),
                     Text('${task.attachments.length}',
-                        style: TextStyle(fontSize: 12)),
+                        style: const TextStyle(fontSize: 12)),
                   ],
                 ],
               ),

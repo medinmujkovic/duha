@@ -2,6 +2,8 @@ import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:flutter/material.dart';
 
 class FilterSheet extends StatefulWidget {
+  const FilterSheet({super.key});
+
   @override
   _FilterSheetState createState() => _FilterSheetState();
 }
@@ -14,7 +16,7 @@ class _FilterSheetState extends State<FilterSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,19 +24,19 @@ class _FilterSheetState extends State<FilterSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Filters',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               IconButton(
-                icon: Icon(Icons.close),
+                icon: const Icon(Icons.close),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
-          SizedBox(height: 20),
-          Text('Priority', style: TextStyle(fontWeight: FontWeight.w600)),
-          SizedBox(height: 8),
+          const SizedBox(height: 20),
+          const Text('Priority', style: TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             children: Priority.values.map((priority) {
@@ -49,9 +51,9 @@ class _FilterSheetState extends State<FilterSheet> {
               );
             }).toList(),
           ),
-          SizedBox(height: 16),
-          Text('Tags', style: TextStyle(fontWeight: FontWeight.w600)),
-          SizedBox(height: 8),
+          const SizedBox(height: 16),
+          const Text('Tags', style: TextStyle(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
           Wrap(
             spacing: 8,
             children: ['work', 'personal', 'urgent', 'later'].map((tag) {
@@ -62,7 +64,7 @@ class _FilterSheetState extends State<FilterSheet> {
               );
             }).toList(),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Row(
             children: [
               Expanded(
@@ -74,18 +76,18 @@ class _FilterSheetState extends State<FilterSheet> {
                       _selectedSection = null;
                     });
                   },
-                  child: Text('Clear All'),
+                  child: const Text('Clear All'),
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF7C3AED),
+                    backgroundColor: const Color(0xFF7C3AED),
                     foregroundColor: Colors.white,
                   ),
-                  child: Text('Apply'),
+                  child: const Text('Apply'),
                 ),
               ),
             ],

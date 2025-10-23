@@ -1,8 +1,8 @@
+import 'package:duha_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:duha_app/features/auth/presentation/widgets/auth_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/auth_notifier.dart';
-import '../providers/auth_state.dart';
+import '../states/auth_state.dart';
 import '../../../../main_screen.dart';
 import '../widgets/auth_logo.dart';
 import '../widgets/auth_toggle_buttons.dart';
@@ -39,7 +39,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (next.isSuccess) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => MainScreen()),
+          MaterialPageRoute(builder: (_) => const MainScreen()),
         );
         Future.microtask(() => ref.read(authProvider.notifier).resetSuccess());
       }

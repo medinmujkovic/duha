@@ -15,7 +15,7 @@ class DataService {
   final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
   final List<GroupModel> _groups = [];
-  UserModel _currentUser = UserModel(
+  final UserModel _currentUser = UserModel(
     id: '1',
     name: 'You',
     email: 'you@example.com',

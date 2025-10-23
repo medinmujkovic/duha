@@ -26,7 +26,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
   void _showGroupMenu() {
     showModalBottomSheet(
       context: context,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => SafeArea(
@@ -34,8 +34,8 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.person_add, color: Colors.blue),
-              title: Text('Dodaj člana'),
+              leading: const Icon(Icons.person_add, color: Colors.blue),
+              title: const Text('Dodaj člana'),
               onTap: () {
                 Navigator.pop(context);
                 _showAddMemberDialog();
@@ -70,16 +70,16 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings, color: Colors.grey),
-              title: Text('Postavke grupe'),
+              leading: const Icon(Icons.settings, color: Colors.grey),
+              title: const Text('Postavke grupe'),
               onTap: () {
                 Navigator.pop(context);
                 // TODO: Implementirati postavke
               },
             ),
             ListTile(
-              leading: Icon(Icons.exit_to_app, color: Colors.red),
-              title: Text('Napusti grupu', style: TextStyle(color: Colors.red)),
+              leading: const Icon(Icons.exit_to_app, color: Colors.red),
+              title: const Text('Napusti grupu', style: TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 _showLeaveGroupDialog();
@@ -97,13 +97,13 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Dodaj člana'),
+        title: const Text('Dodaj člana'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: emailController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Email adresa',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.email),
@@ -115,7 +115,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Otkaži'),
+            child: const Text('Otkaži'),
           ),
           FilledButton(
             onPressed: () {
@@ -126,7 +126,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
                         Text('Pozivnica poslana na ${emailController.text}')),
               );
             },
-            child: Text('Pošalji pozivnicu'),
+            child: const Text('Pošalji pozivnicu'),
           ),
         ],
       ),
@@ -137,23 +137,23 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Napusti grupu?'),
-        content: Text('Da li ste sigurni da želite napustiti ovu grupu?'),
+        title: const Text('Napusti grupu?'),
+        content: const Text('Da li ste sigurni da želite napustiti ovu grupu?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Otkaži'),
+            child: const Text('Otkaži'),
           ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context); // Vrati se na prethodni screen
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Napustili ste grupu')),
+                const SnackBar(content: Text('Napustili ste grupu')),
               );
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Napusti'),
+            child: const Text('Napusti'),
           ),
         ],
       ),
@@ -169,10 +169,10 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Marketing Tim'),
+        title: const Text('Marketing Tim'),
         actions: [
           IconButton(
-            icon: Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert),
             onPressed: _showGroupMenu,
           ),
         ],

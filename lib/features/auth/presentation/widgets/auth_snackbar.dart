@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 void showError(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(

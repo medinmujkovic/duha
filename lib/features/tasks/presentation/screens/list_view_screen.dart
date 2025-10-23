@@ -6,6 +6,8 @@ import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 
 class CustomListView extends StatefulWidget {
+  const CustomListView({super.key});
+
   @override
   _CustomListViewState createState() => _CustomListViewState();
 }
@@ -19,15 +21,15 @@ class _CustomListViewState extends State<CustomListView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Projects'),
+        title: const Text('All Projects'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_box_outlined),
+            icon: const Icon(Icons.add_box_outlined),
             onPressed: () => _showAddSectionDialog(context),
             tooltip: 'Add Section',
           ),
           IconButton(
-            icon: Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list),
             onPressed: () => _showFilterSheet(context),
           ),
         ],
@@ -38,13 +40,13 @@ class _CustomListViewState extends State<CustomListView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.inbox, size: 80, color: Colors.grey[300]),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text('No sections yet',
                       style: TextStyle(color: Colors.grey[600])),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () => _showAddSectionDialog(context),
-                    child: Text('Create First Section'),
+                    child: const Text('Create First Section'),
                   ),
                 ],
               ),
@@ -59,10 +61,10 @@ class _CustomListViewState extends State<CustomListView> {
 
                 return ExpansionTile(
                   initiallyExpanded: true,
-                  leading: Icon(Icons.folder, color: Color(0xFF7C3AED)),
+                  leading: const Icon(Icons.folder, color: Color(0xFF7C3AED)),
                   title: Text(
                     section.name,
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text('${sectionTasks.length} tasks'),
                   trailing: PopupMenuButton(
@@ -99,16 +101,16 @@ class _CustomListViewState extends State<CustomListView> {
                           },
                         )),
                     Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: OutlinedButton.icon(
                         onPressed: () {
                           print(section.id);
                           showTaskCreate(context, null, sectionId: section.id);
                         },
-                        icon: Icon(Icons.add),
-                        label: Text('Add Task'),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add Task'),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Color(0xFF7C3AED),
+                          foregroundColor: const Color(0xFF7C3AED),
                         ),
                       ),
                     ),
@@ -129,16 +131,16 @@ class _CustomListViewState extends State<CustomListView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('New Section'),
+        title: const Text('New Section'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(hintText: 'Section name'),
+          decoration: const InputDecoration(hintText: 'Section name'),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -148,7 +150,7 @@ class _CustomListViewState extends State<CustomListView> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Create'),
+            child: const Text('Create'),
           ),
         ],
       ),
@@ -160,16 +162,16 @@ class _CustomListViewState extends State<CustomListView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Rename Section'),
+        title: const Text('Rename Section'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(hintText: 'Section name'),
+          decoration: const InputDecoration(hintText: 'Section name'),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -179,7 +181,7 @@ class _CustomListViewState extends State<CustomListView> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Save'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -191,7 +193,7 @@ class _CustomListViewState extends State<CustomListView> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
@@ -201,18 +203,18 @@ class _CustomListViewState extends State<CustomListView> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 16),
-              Text(
+              const SizedBox(height: 16),
+              const Text(
                 'All Completed Tasks',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               ...filteredTasks.map((task) {
                 return Card(
-                  margin: EdgeInsets.only(bottom: 8),
+                  margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
                       backgroundColor: Colors.green[100],
@@ -225,11 +227,11 @@ class _CustomListViewState extends State<CustomListView> {
                         Text(task.groupId ?? 'No Group'),
                         Text(
                           'Completed by: ${task.completedByIds.join(", ")}',
-                          style: TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 12),
                         ),
                         Text(
                           '${task.completedAt!.day}/${task.completedAt!.month}/${task.completedAt!.year}',
-                          style: TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ],
                     ),
@@ -239,7 +241,7 @@ class _CustomListViewState extends State<CustomListView> {
                     ),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         );

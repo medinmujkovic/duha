@@ -73,7 +73,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
     final isEditing = widget.task != null;
 
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Form(
         key: _formKey,
         child: ListView(
@@ -90,14 +90,14 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 ),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Title
             Text(
               isEditing ? 'Uredi zadatak' : 'Kreiraj novi zadatak',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Task Title Field
             TextFormField(
@@ -108,7 +108,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                prefixIcon: Icon(Icons.task_alt),
+                prefixIcon: const Icon(Icons.task_alt),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -118,7 +118,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
               },
               textInputAction: TextInputAction.next,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Description Field
             TextFormField(
@@ -129,20 +129,20 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                prefixIcon: Icon(Icons.notes),
+                prefixIcon: const Icon(Icons.notes),
                 alignLabelWithHint: true,
               ),
               maxLines: 3,
               textInputAction: TextInputAction.newline,
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Task Type Selection
-            Text(
+            const Text(
               'Tip zadatka',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
@@ -158,7 +158,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                     },
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: _TaskTypeCard(
                     title: 'Bilo ko',
@@ -174,17 +174,17 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 ),
               ],
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Priority Dropdown
             DropdownButtonFormField<Priority>(
-              value: _selectedPriority,
+              initialValue: _selectedPriority,
               decoration: InputDecoration(
                 labelText: 'Prioritet',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                prefixIcon: Icon(Icons.flag),
+                prefixIcon: const Icon(Icons.flag),
               ),
               items: Priority.values.map((priority) {
                 return DropdownMenuItem(
@@ -199,7 +199,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                           shape: BoxShape.circle,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Text(priority.name),
                     ],
                   ),
@@ -211,7 +211,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Deadline Picker
             InkWell(
@@ -223,10 +223,10 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  prefixIcon: Icon(Icons.calendar_today),
+                  prefixIcon: const Icon(Icons.calendar_today),
                   suffixIcon: _selectedDeadline != null
                       ? IconButton(
-                          icon: Icon(Icons.clear, size: 20),
+                          icon: const Icon(Icons.clear, size: 20),
                           onPressed: () {
                             setState(() {
                               _selectedDeadline = null;
@@ -258,7 +258,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                prefixIcon: Icon(Icons.repeat),
+                prefixIcon: const Icon(Icons.repeat),
               ),
               items: const [
                 DropdownMenuItem(value: null, child: Text('Bez ponavljanja')),
@@ -275,14 +275,14 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 });
               },
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Assignees Section
             const Text(
               'Dodijeli članovima',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -325,9 +325,9 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
             // Info banner for All Members task
             if (_selectedTaskType == TaskType.allMembers &&
                 _selectedAssignees.length > 1) ...[
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.blue[50],
                   borderRadius: BorderRadius.circular(8),
@@ -336,7 +336,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                 child: Row(
                   children: [
                     Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Svi dodijeljeni članovi moraju završiti ovaj zadatak',
@@ -354,9 +354,9 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
             // Info banner for Any Member task
             if (_selectedTaskType == TaskType.allMembers &&
                 _selectedAssignees.length > 1) ...[
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.purple[50],
                   borderRadius: BorderRadius.circular(8),
@@ -366,7 +366,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                   children: [
                     Icon(Icons.info_outline,
                         color: Colors.purple[700], size: 20),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Dovoljno je da jedan član završi ovaj zadatak',
@@ -381,7 +381,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
               ),
             ],
 
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
             // Action Buttons
             Row(
@@ -390,34 +390,34 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text('Otkaži'),
+                    child: const Text('Otkaži'),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   flex: 2,
                   child: FilledButton(
                     onPressed: _saveTask,
                     style: FilledButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     child: Text(
                       isEditing ? 'Sačuvaj promjene' : 'Kreiraj zadatak',
-                      style: TextStyle(fontSize: 16),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -430,7 +430,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
       context: context,
       initialDate: _selectedDeadline ?? DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
     );
 
     if (date != null) {
@@ -494,7 +494,7 @@ class _TaskTypeCard extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           border: Border.all(
             color: isSelected
@@ -516,7 +516,7 @@ class _TaskTypeCard extends StatelessWidget {
                   ? Theme.of(context).colorScheme.primary
                   : Colors.grey[600],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               title,
               style: TextStyle(
@@ -526,7 +526,7 @@ class _TaskTypeCard extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: TextStyle(

@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class TaskDetailScreen extends StatefulWidget {
   final Task task;
 
-  TaskDetailScreen({required this.task});
+  const TaskDetailScreen({super.key, required this.task});
 
   @override
   _TaskDetailScreenState createState() => _TaskDetailScreenState();
@@ -27,16 +27,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task Details'),
+        title: const Text('Task Details'),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () {
               showTaskDetail(context,_dataService, task);
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               _showDeleteDialog(context);
             },
@@ -49,7 +49,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
           children: [
             // Task Header
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               color: _getPriorityColor(task.priority).withOpacity(0.1),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +79,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   if (task.description.isNotEmpty)
                     Text(
                       task.description,
@@ -91,7 +91,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
             // Task Info Section
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -107,25 +107,25 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               ),
             ),
 
-            Divider(),
+            const Divider(),
 
             // Assignees Section
             if (task.assigneeIds.length > 1) ...[
               Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Team Progress',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Container(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.blue[50],
                         borderRadius: BorderRadius.circular(12),
@@ -139,11 +139,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               value: task.completionProgress,
                               backgroundColor: Colors.grey[300],
                               valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.blue),
+                                  const AlwaysStoppedAnimation<Color>(Colors.blue),
                               minHeight: 12,
                             ),
                           ),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           Text(
                             '${task.completedByIds.length} of ${task.assigneeIds.length} members completed',
                             style: TextStyle(
@@ -151,12 +151,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               color: Colors.blue[700],
                             ),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           ...task.assigneeIds.map((assigneeId) {
                             final isCompleted =
                                 task.completedByIds.contains(assigneeId);
                             return Padding(
-                              padding: EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.only(bottom: 8),
                               child: Row(
                                 children: [
                                   CircleAvatar(
@@ -169,32 +169,32 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                       size: 20,
                                     ),
                                   ),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
                                       assigneeId,
-                                      style: TextStyle(fontSize: 16),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ),
                                   if (isCompleted)
-                                    Icon(Icons.check_circle,
+                                    const Icon(Icons.check_circle,
                                         color: Colors.green),
                                 ],
                               ),
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
             ],
 
             // Subtasks Section
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -203,19 +203,19 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     children: [
                       Text(
                         'Subtasks (${task.completedSubtasksCount}/${task.subtasks.length})',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       TextButton.icon(
                         onPressed: () => _showAddSubtaskDialog(context),
-                        icon: Icon(Icons.add),
-                        label: Text('Add'),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Add'),
                       ),
                     ],
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ...task.subtasks.map((subtask) => CheckboxListTile(
                         value: subtask.isCompleted,
                         onChanged: (value) {
@@ -237,18 +237,18 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               ),
             ),
 
-            Divider(),
+            const Divider(),
 
             // Attachments Section
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
+                      const Text(
                         'Attachments',
                         style: TextStyle(
                           fontSize: 18,
@@ -257,14 +257,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                       ),
                       TextButton.icon(
                         onPressed: () => _showAddAttachmentDialog(context),
-                        icon: Icon(Icons.attach_file),
-                        label: Text('Add'),
+                        icon: const Icon(Icons.attach_file),
+                        label: const Text('Add'),
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   if (task.attachments.isEmpty)
-                    Center(
+                    const Center(
                       child: Text(
                         'No attachments yet',
                         style: TextStyle(color: Colors.grey),
@@ -277,11 +277,11 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                               attachment.type == 'image'
                                   ? Icons.image
                                   : Icons.description,
-                              color: Color(0xFF7C3AED),
+                              color: const Color(0xFF7C3AED),
                             ),
                             title: Text(attachment.name),
                             trailing: IconButton(
-                              icon: Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () {
                                 setState(() {
                                   task.attachments.remove(attachment);
@@ -294,39 +294,39 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               ),
             ),
 
-            Divider(),
+            const Divider(),
 
             // Comments Section
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Comments',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   ...task.comments.map((comment) => Card(
-                        margin: EdgeInsets.only(bottom: 12),
+                        margin: const EdgeInsets.only(bottom: 12),
                         child: Padding(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: Color(0xFF7C3AED),
+                                    backgroundColor: const Color(0xFF7C3AED),
                                     child: Text(
                                       comment.userName[0].toUpperCase(),
-                                      style: TextStyle(color: Colors.white),
+                                      style: const TextStyle(color: Colors.white),
                                     ),
                                   ),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
@@ -334,13 +334,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                       children: [
                                         Text(
                                           comment.userName,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         Text(
                                           '${comment.timestamp.day}/${comment.timestamp.month} ${comment.timestamp.hour}:${comment.timestamp.minute}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.grey,
                                           ),
@@ -350,13 +350,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(comment.content),
                             ],
                           ),
                         ),
                       )),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
@@ -371,10 +371,10 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                           maxLines: null,
                         ),
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       IconButton(
-                        icon: Icon(Icons.send),
-                        color: Color(0xFF7C3AED),
+                        icon: const Icon(Icons.send),
+                        color: const Color(0xFF7C3AED),
                         onPressed: () {
                           if (_commentController.text.isNotEmpty) {
                             setState(() {
@@ -403,14 +403,14 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
           Icon(icon, size: 20, color: Colors.grey[600]),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Text(
             '$label: ',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           Text(
             value,
@@ -438,12 +438,12 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Task'),
-        content: Text('Are you sure you want to delete this task?'),
+        title: const Text('Delete Task'),
+        content: const Text('Are you sure you want to delete this task?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -452,7 +452,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               Navigator.pop(context);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -464,16 +464,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Add Subtask'),
+        title: const Text('Add Subtask'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(hintText: 'Subtask title'),
+          decoration: const InputDecoration(hintText: 'Subtask title'),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () {
@@ -487,7 +487,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                 Navigator.pop(context);
               }
             },
-            child: Text('Add'),
+            child: const Text('Add'),
           ),
         ],
       ),
@@ -498,13 +498,13 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Add Attachment'),
+        title: const Text('Add Attachment'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.image),
-              title: Text('Image'),
+              leading: const Icon(Icons.image),
+              title: const Text('Image'),
               onTap: () {
                 setState(() {
                   widget.task.attachments.add(TaskAttachment(
@@ -518,8 +518,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.description),
-              title: Text('Document'),
+              leading: const Icon(Icons.description),
+              title: const Text('Document'),
               onTap: () {
                 setState(() {
                   widget.task.attachments.add(TaskAttachment(

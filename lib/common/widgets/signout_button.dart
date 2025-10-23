@@ -1,5 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:duha_app/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:duha_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:duha_app/features/auth/presentation/screens/auth_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
