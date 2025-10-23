@@ -1,13 +1,11 @@
 // lib/providers/user_provider.dart
 import 'package:duha_app/features/auth/data/models/user_model.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../data/models/user_model.dart';
 
 part 'user_provider.g.dart';
 
 @riverpod
-class UserNotifier extends _$UserNotifier {
+class User extends _$UserNotifier {
   @override
   UserModel? build() {
     // No user logged in by default

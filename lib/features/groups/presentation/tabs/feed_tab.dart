@@ -1,17 +1,17 @@
-  import 'package:duha_app/features/auth/data/models/user_provider.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/projects/data/models/user_activity_model/user_activity_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FeedTab extends StatefulWidget {
+class FeedTab extends ConsumerStatefulWidget {
   const FeedTab({Key? key}) : super(key: key);
 
   @override
-  State<FeedTab> createState() => _FeedTabState();
+  ConsumerState<FeedTab> createState() => _FeedTabState();
 }
 
-class _FeedTabState extends State<FeedTab>
+class _FeedTabState extends ConsumerState<FeedTab>
     with AutomaticKeepAliveClientMixin {
 
   final DataService _dataService = DataService();
@@ -25,12 +25,14 @@ class _FeedTabState extends State<FeedTab>
   @override
   void initState() {
     super.initState();
-    _loadFeed();
+    // Schedule the load after the first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadFeed();
+    });
   }
 
   Future<void> _loadFeed() async {
-    final userProvider = Provider<UserProvider>(context, listen: false);
-    final userId = userProvider.userId;
+    final userId = ref.read(userProvider).userId;
 
     if (userId == null) {
       setState(() {
