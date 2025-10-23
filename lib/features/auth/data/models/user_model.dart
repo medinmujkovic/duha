@@ -1,64 +1,35 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../models/user_model.dart';
 
+part 'user_model.freezed.dart';
+part 'user_model.g.dart'
 
-class UserModel {
-  final String id;
-  final String name;
-  final String email;
-  final String avatar;
-  int level;
-  int xp;
-  int streak;
+@freezed
+class UserModel with _$UserModel {
+  const factory UserModel({
+  required String? id,
+  required String? name,
+  required String? email,
+  required String? avatar,
+  int level,
+  int xp,
+  int streak,
+}) = _UserModel;
 
-  UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.avatar,
-    this.level = 1,
-    this.xp = 0,
-    this.streak = 0,
-  });
+  // Add this constructor for computed properties
+  const UserModel._();
 
-  UserModel copyWith({
-    String? id,
-    String? name,
-    String? email,
-    String? avatar,
-    int? level,
-    int? xp,
-    int? streak,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      email: email ?? this.email,
-      avatar: avatar ?? this.avatar,
-      level: level ?? this.level,
-      xp: xp ?? this.xp,
-      streak: streak ?? this.streak,
-    );
-  }
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'email': email,
-      'avatar': avatar,
-      'level': level,
-      'xp': xp,
-      'streak': streak,
-    };
-  }
+  // Computed property
+  bool get isAuthenticated => userId != null;
 
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      avatar: json['avatar'] as String,
-      level: json['level'] as int? ?? 1,
-      xp: json['xp'] as int? ?? 0,
-      streak: json['streak'] as int? ?? 0,
-    );
-  }
+  // Factory for empty/unauthenticated user
+  factory UserModel.empty() => const UserModel(
+        id: null,
+        email: null,
+        name: null,
+        avatar: null,
+      );
+
 }

@@ -1,6 +1,6 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
-import 'package:duha_app/features/projects/data/models/section_model.dart';
+import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
