@@ -1,10 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../models/user_model.dart';
 
 part 'user_model.freezed.dart';
-part 'user_model.g.dart'
+part 'user_model.g.dart';
 
 @freezed
 class UserModel with _$UserModel {
@@ -13,23 +10,25 @@ class UserModel with _$UserModel {
   required String? name,
   required String? email,
   required String? avatar,
-  int level,
-  int xp,
-  int streak,
+  required int level,
+  required int  xp,
+  required int streak,
 }) = _UserModel;
 
   // Add this constructor for computed properties
   const UserModel._();
 
   // Computed property
-  bool get isAuthenticated => userId != null;
+  bool get isAuthenticated => id != null;
 
   // Factory for empty/unauthenticated user
   factory UserModel.empty() => const UserModel(
         id: null,
         email: null,
         name: null,
-        avatar: null,
+        avatar: null, level: 0, xp: 0, streak: 0,
       );
+
+  factory UserModel.fromJson(Map<String, dynamic> json) =>_$UserModelFromJson(json);
 
 }

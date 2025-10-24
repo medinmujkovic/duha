@@ -147,7 +147,7 @@ class Auth extends _$Auth {
         id: 'user_${DateTime.now().millisecondsSinceEpoch}',
         name: state.name.isEmpty ? 'Test User' : state.name,
         email: state.email,
-        avatar: state.name.isEmpty ? 'T' : state.name[0].toUpperCase(),
+        avatar: state.name.isEmpty ? 'T' : state.name[0].toUpperCase(), level: 0, xp: 0, streak: 0,
       );
       
       // 🔥 ACCESS OTHER PROVIDER: ref.read()

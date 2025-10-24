@@ -1,23 +1,26 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CustomListView extends StatefulWidget {
+class CustomListView extends ConsumerStatefulWidget {
   const CustomListView({super.key});
 
   @override
   _CustomListViewState createState() => _CustomListViewState();
 }
 
-class _CustomListViewState extends State<CustomListView> {
+class _CustomListViewState extends ConsumerState<CustomListView> {
   final DataService _dataService = DataService();
   @override
   Widget build(BuildContext context) {
     final sections = _dataService.getSections();
     final tasks = _dataService.getTasks();
+    final user = ref.read(userProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -96,7 +99,7 @@ class _CustomListViewState extends State<CustomListView> {
                           onToggle: () {
                             setState(() {
                               _dataService.toggleTaskCompletion(
-                                  task.id, _dataService.getCurrentUser().id);
+                                  task.id, user?.id ?? '');
                             });
                           },
                         )),

@@ -1,9 +1,7 @@
 import 'dart:math';
-
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
-import 'package:duha_app/features/projects/data/models/user_activity_model/user_activity_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
 
@@ -15,7 +13,7 @@ class DataService {
   final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
   final List<GroupModel> _groups = [];
-  final UserModel _currentUser = UserModel(
+  UserModel _currentUser = UserModel(
     id: '1',
     name: 'You',
     email: 'you@example.com',
@@ -40,43 +38,37 @@ class DataService {
 
   List<GroupModel> getGroups(String id) => _groups.where((g) => g.memberIds.contains(id)).toList();
 
-  List<UserActivity> getLeaderboard(String id ) {
-    final userActivities = <UserActivity>[];
+  List<UserModel> getLeaderboard(String id ) {
+    final userActivities = <UserModel>[];
 
     for (var group in getGroups(id)) {
       for (var memberId in group.memberIds) {
         // Simulate fetching user activity data
-        userActivities.add(UserActivity(
+        userActivities.add(UserModel(
           id: memberId,
-          username: 'User $memberId',
-          groupId: group.id,
-          userId: memberId,
-          xp: Random().nextInt(5000).toString(),
-          level: Random().nextInt(20).toString(),
-          streak: Random().nextInt(30).toString(),
+          xp: Random().nextInt(5000),
+          level: Random().nextInt(20),
+          streak: Random().nextInt(30), name: '', email: '', avatar: '',
         ));
       }
     }
 
-    userActivities.sort((a, b) => int.parse(b.xp).compareTo(int.parse(a.xp)));
+    userActivities.sort((a, b) => int.parse(b.xp as String).compareTo(int.parse(a.xp as String)));
 
     return userActivities;
 
   }
 
-  List<UserActivity> getRecentActivities() {
-    final activities = <UserActivity>[];
+  List<UserModel> getRecentActivities() {
+    final activities = <UserModel>[];
 
     // Simulate recent activities
     for (int i = 0; i < 10; i++) {
-      activities.add(UserActivity(
+      activities.add(UserModel(
         id: 'activity_$i',
-        username: 'User ${i + 1}',
-        groupId: 'group_1',
-        userId: 'user_${Random().nextInt(5) + 1}',
-        xp: Random().nextInt(500).toString(),
-        level: Random().nextInt(20).toString(),
-        streak: Random().nextInt(30).toString(),
+        xp: Random().nextInt(500),
+        level: Random().nextInt(20),
+        streak: Random().nextInt(30), name: '', email: '', avatar: '',
       ));
     }
 
@@ -133,12 +125,16 @@ class DataService {
 
     if (task.isCompleted && task.completedAt == null) {
       task.completedAt = DateTime.now();
-      _currentUser.xp += task.xpReward;
+      _currentUser = _currentUser.copyWith(
+        xp: _currentUser.xp + task.xpReward,
+      );
 
       // Level up check
       if (_currentUser.xp >= 3000) {
-        _currentUser.level++;
-        _currentUser.xp -= 3000;
+        _currentUser = _currentUser.copyWith(
+          level: _currentUser.level + 1,
+          xp: _currentUser.xp - 3000,
+        );
       }
     } else if (!task.isCompleted) {
       task.completedAt = null;

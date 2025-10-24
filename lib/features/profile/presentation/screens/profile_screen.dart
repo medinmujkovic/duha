@@ -1,15 +1,15 @@
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/auth/presentation/screens/auth_screen.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ProfileScreen extends StatelessWidget {
-  final DataService _dataService = DataService();
+class ProfileScreen extends ConsumerWidget {
 
   ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final user = _dataService.getCurrentUser();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(userProvider)!;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +37,7 @@ class ProfileScreen extends StatelessWidget {
                     radius: 50,
                     backgroundColor: const Color(0xFF7C3AED),
                     child: Text(
-                      user.name[0].toUpperCase(),
+                      user.name![0].toUpperCase(),
                       style: const TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.bold,
@@ -47,14 +47,14 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    user.name,
+                    user.name ?? 'No Name',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    user.email,
+                    user.email ?? 'No Email',
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 16),

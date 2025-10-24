@@ -3,27 +3,29 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/common/widgets/signout_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/filtering/presentation/screens/filter_sheet.dart';
 import 'package:duha_app/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/presentation/screens/task_detail_screen.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   final DataService _dataService = DataService();
 
   @override
   Widget build(BuildContext context) {
     final tasks = _dataService.getTasks();
-    final user = _dataService.getCurrentUser();
+    final user = ref.read( userProvider)!;
     final incompleteTasks = tasks.where((t) => !t.isCompleted).length;
 
     return Scaffold(
@@ -168,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onToggle: () {
                     setState(() {
                       _dataService.toggleTaskCompletion(
-                          task.id, _dataService.getCurrentUser().id);
+                          task.id, user.id ?? 'unknown');
                     });
                   },
                 );

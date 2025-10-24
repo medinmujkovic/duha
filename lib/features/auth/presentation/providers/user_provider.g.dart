@@ -102,7 +102,7 @@ final xpProgressProvider = AutoDisposeProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef XpProgressRef = AutoDisposeProviderRef<double>;
-String _$userHash() => r'fd9b863640a860d771aa9b285d4447da8277301e';
+String _$userHash() => r'1dee83458d023c2d64c3c364332757c24ed8346d';
 
 /// See also [User].
 @ProviderFor(User)

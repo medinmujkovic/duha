@@ -1,4 +1,5 @@
 import 'package:duha_app/core/util/task_utils.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask/subtask_model.dart';
@@ -6,8 +7,9 @@ import 'package:duha_app/features/tasks/data/models/task_comment.dart';
 import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TaskDetailScreen extends StatefulWidget {
+class TaskDetailScreen extends ConsumerStatefulWidget {
   final Task task;
 
   const TaskDetailScreen({super.key, required this.task});
@@ -16,14 +18,14 @@ class TaskDetailScreen extends StatefulWidget {
   _TaskDetailScreenState createState() => _TaskDetailScreenState();
 }
 
-class _TaskDetailScreenState extends State<TaskDetailScreen> {
+class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
   final DataService _dataService = DataService();
   final _commentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final task = widget.task;
-    final currentUser = _dataService.getCurrentUser();
+    final user = ref.read(userProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +63,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                         onChanged: (_) {
                           setState(() {
                             _dataService.toggleTaskCompletion(
-                                task.id, currentUser.id);
+                                task.id,user?.id ?? '');
                           });
                         },
                       ),
@@ -380,8 +382,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             setState(() {
                               task.comments.add(TaskComment(
                                 id: DateTime.now().toString(),
-                                userId: currentUser.id,
-                                userName: currentUser.name,
+                                userId: user?.id ?? '',
+                                userName: user?.name ?? 'Unknown',
                                 content: _commentController.text,
                                 timestamp: DateTime.now(),
                               ));

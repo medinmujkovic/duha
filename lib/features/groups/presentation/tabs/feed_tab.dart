@@ -1,5 +1,5 @@
+import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/features/projects/data/models/user_activity_model/user_activity_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +15,7 @@ class _FeedTabState extends ConsumerState<FeedTab>
     with AutomaticKeepAliveClientMixin {
 
   final DataService _dataService = DataService();
-  List<UserActivity> _activities = [];
+  List<UserModel> _activities = [];
   bool _isLoading = true;
   String? _error;
 
@@ -32,7 +32,7 @@ class _FeedTabState extends ConsumerState<FeedTab>
   }
 
   Future<void> _loadFeed() async {
-    final userId = ref.read(userProvider).userId;
+    final userId = ref.read(userProvider)?.id;
 
     if (userId == null) {
       setState(() {
@@ -109,7 +109,7 @@ class _FeedTabState extends ConsumerState<FeedTab>
               leading: CircleAvatar(
                 backgroundColor: Color(0xFF7C3AED),
                 child: Text(
-                  activity.username,
+                  activity.name??'?',
                   style: TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                 ),
@@ -119,7 +119,7 @@ class _FeedTabState extends ConsumerState<FeedTab>
                   style: TextStyle(color: Colors.black, fontSize: 14),
                   children: [
                     TextSpan(
-                      text: '${activity.username} ',
+                      text: '${activity.name} ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -127,7 +127,7 @@ class _FeedTabState extends ConsumerState<FeedTab>
               ),
               subtitle: Row(
                 children: [
-                  Text(activity.streak),
+                  Text(activity.streak.toString()),
                    ...[
                     SizedBox(width: 12),
                     Icon(Icons.star, size: 14, color: Colors.amber),

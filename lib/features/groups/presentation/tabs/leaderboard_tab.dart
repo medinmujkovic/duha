@@ -1,20 +1,20 @@
-import 'package:duha_app/features/auth/data/models/user_provider.dart';
-import 'package:duha_app/features/projects/data/models/user_activity_model/user_activity_model.dart';
+import 'package:duha_app/features/auth/data/models/user_model.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LeaderboardTab extends StatefulWidget {
+class LeaderboardTab extends ConsumerStatefulWidget {
   const LeaderboardTab({Key? key}) : super(key: key);
 
   @override
   _LeaderboardTabState createState() => _LeaderboardTabState();
 }
 
-class _LeaderboardTabState extends State<LeaderboardTab>
+class _LeaderboardTabState extends ConsumerState<LeaderboardTab>
     with AutomaticKeepAliveClientMixin {
   final DataService _dataService = DataService();
-  List<UserActivity> _leaderboard = [];
+  List<UserModel> _leaderboard = [];
   bool _isLoading = true;
   String? _error;
 
@@ -28,8 +28,8 @@ class _LeaderboardTabState extends State<LeaderboardTab>
   }
 
   Future<void> _loadLeaderboard() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final userId = userProvider.userId;
+    final user = ref.read(userProvider);
+    final userId = user?.id;
 
     if (userId == null) {
       setState(() {
@@ -128,8 +128,8 @@ class _LeaderboardTabState extends State<LeaderboardTab>
                 ),
               ),
               title: Text(
-                user.username,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                user.name??'Unknown',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Row(
                 children: [

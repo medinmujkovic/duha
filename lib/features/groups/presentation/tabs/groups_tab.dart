@@ -1,18 +1,18 @@
-import 'package:duha_app/features/auth/data/models/user_provider.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/presentation/screens/group_detail_screen.dart';
 import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GroupsTab extends StatefulWidget {
-  const GroupsTab({Key? key}) : super(key: key);
+class GroupsTab extends ConsumerStatefulWidget {
+  const GroupsTab({super.key});
 
   @override
-  State<GroupsTab> createState() => _GroupsTabState();
+  ConsumerState<GroupsTab> createState() => _GroupsTabState();
 }
 
-class _GroupsTabState extends State<GroupsTab>
+class _GroupsTabState extends ConsumerState<GroupsTab>
     with AutomaticKeepAliveClientMixin {
   final DataService _dataService = DataService();
   List<GroupModel> _groups = [];
@@ -25,14 +25,18 @@ class _GroupsTabState extends State<GroupsTab>
   @override
   void initState() {
     super.initState();
-    _loadGroups();
+    // defer reading providers until after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadGroups();
+    });
   }
 
   Future<void> _loadGroups() async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final userId = userProvider.userId;
+    final user = ref.read(userProvider);
+    final userId = user?.id; 
 
     if (userId == null) {
+      if(!mounted)return;
       setState(() {
         _error = 'User not authenticated';
         _isLoading = false;
@@ -40,23 +44,25 @@ class _GroupsTabState extends State<GroupsTab>
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    if(!mounted)return;
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
 
     try {
       // Replace this with your actual API call
-      // final groups = await _dataService.getGroupsForUser(userId);
       
       // For now, using local data service
       final groups = _dataService.getGroups(userId);
-      
+
+      if (!mounted) return;
       setState(() {
         _groups = groups;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
         _isLoading = false;
@@ -69,7 +75,7 @@ class _GroupsTabState extends State<GroupsTab>
     super.build(context); // Required for AutomaticKeepAliveClientMixin
 
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
@@ -77,13 +83,13 @@ class _GroupsTabState extends State<GroupsTab>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red),
-            SizedBox(height: 16),
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
             Text(_error!),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _loadGroups,
-              child: Text('Retry'),
+              child: const Text('Retry'),
             ),
           ],
         ),
@@ -93,36 +99,36 @@ class _GroupsTabState extends State<GroupsTab>
     return RefreshIndicator(
       onRefresh: _loadGroups,
       child: ListView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         children: [
           Card(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Share Your Group',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     'Invite team members to collaborate on your groups',
                     style: TextStyle(color: Colors.grey[600]),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton.icon(
                     onPressed: () => _showCreateGroupDialog(context),
-                    icon: Icon(Icons.add),
-                    label: Text('Create New Group'),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Create New Group'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF7C3AED),
+                      backgroundColor: const Color(0xFF7C3AED),
                       foregroundColor: Colors.white,
                     ),
                   ),
@@ -130,16 +136,16 @@ class _GroupsTabState extends State<GroupsTab>
               ),
             ),
           ),
-          SizedBox(height: 16),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             'Your Groups',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           if (_groups.isEmpty)
             Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: Text(
                   'No groups yet. Create one to get started!',
                   style: TextStyle(color: Colors.grey[600]),
@@ -149,7 +155,7 @@ class _GroupsTabState extends State<GroupsTab>
           else
             ..._groups.map((group) {
               return Card(
-                margin: EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -171,21 +177,21 @@ class _GroupsTabState extends State<GroupsTab>
                         color: _getColorFromString(group.color),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(Icons.folder, color: Colors.white),
+                      child: const Icon(Icons.folder, color: Colors.white),
                     ),
                     title: Text(
                       group.name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Row(
                       children: [
-                        Icon(Icons.people, size: 14),
-                        SizedBox(width: 4),
+                        const Icon(Icons.people, size: 14),
+                        const SizedBox(width: 4),
                         Text('${group.memberIds.length} members'),
                       ],
                     ),
                     trailing: IconButton(
-                      icon: Icon(Icons.share),
+                      icon: const Icon(Icons.share),
                       onPressed: () => _showShareDialog(context, group),
                     ),
                   ),
@@ -222,7 +228,7 @@ class _GroupsTabState extends State<GroupsTab>
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text('Create New Group'),
+          title: const Text('Create New Group'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -235,9 +241,9 @@ class _GroupsTabState extends State<GroupsTab>
                   ),
                 ),
               ),
-              SizedBox(height: 16),
-              Text('Select Color'),
-              SizedBox(height: 8),
+              const SizedBox(height: 16),
+              const Text('Select Color'),
+              const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 children: ['purple', 'blue', 'green', 'orange', 'pink']
@@ -267,30 +273,29 @@ class _GroupsTabState extends State<GroupsTab>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             ElevatedButton(
               onPressed: () async {
                 if (nameController.text.isNotEmpty) {
-                  final userProvider =
-                      Provider.of<UserProvider>(context, listen: false);
-                  final userId = userProvider.userId;
+                  final user = ref.read(userProvider);
+                  final userId = user?.id;
 
                   if (userId != null) {
                     // Add group with user ID
                     _dataService.addGroup(nameController.text, selectedColor);
-                    Navigator.pop(context);
+                    if (mounted) Navigator.pop(context);
                     
                     // Reload groups
                     await _loadGroups();
                   }
                 }
               },
-              child: Text('Create'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF7C3AED),
+                backgroundColor: const Color(0xFF7C3AED),
                 foregroundColor: Colors.white,
               ),
+              child: const Text('Create'),
             ),
           ],
         ),
