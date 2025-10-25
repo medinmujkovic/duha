@@ -71,7 +71,7 @@ final passwordStrengthProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PasswordStrengthRef = AutoDisposeProviderRef<int>;
-String _$authHash() => r'a737ed766b2ebc039ffad774edca8175358096b1';
+String _$authHash() => r'4e1601816c16c49b264696f92bf065dadd1033c9';
 
 /// See also [Auth].
 @ProviderFor(Auth)

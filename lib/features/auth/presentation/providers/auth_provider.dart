@@ -1,11 +1,9 @@
-// ignore_for_file: deprecated_member_use_from_same_package
-
-import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
+import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../states/auth_state.dart';
 
-part 'auth_provider.g.dart'; 
+part 'auth_provider.g.dart';
 
 @riverpod
 class Auth extends _$Auth {
@@ -67,12 +65,12 @@ class Auth extends _$Auth {
 
     try {
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // TODO: Firebase Auth
       // await FirebaseAuth.instance.sendPasswordResetEmail(
       //   email: state.email,
       // );
-      
+
       state = state.copyWith(
         isSubmitting: false,
         infoMessage: 'Password reset link sent to ${state.email}',
@@ -104,7 +102,7 @@ class Auth extends _$Auth {
 
     try {
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // TODO: Firebase Authentication
       // if (state.isLogin) {
       //   final credential = await FirebaseAuth.instance
@@ -112,12 +110,12 @@ class Auth extends _$Auth {
       //     email: state.email,
       //     password: state.password,
       //   );
-      //   
+      //
       //   final userDoc = await FirebaseFirestore.instance
       //       .collection('users')
       //       .doc(credential.user!.uid)
       //       .get();
-      //   
+      //
       //   final user = UserModel.fromJson(userDoc.data()!);
       //   ref.read(userProvider.notifier).setUser(user);
       // } else {
@@ -126,34 +124,42 @@ class Auth extends _$Auth {
       //     email: state.email,
       //     password: state.password,
       //   );
-      //   
-      //   final newUser = UserModel(
-      //     id: credential.user!.uid,
-      //     name: state.name,
-      //     email: state.email,
-      //     avatar: state.name[0].toUpperCase(),
-      //   );
-      //   
+      //
+
+      if (state.isLogin) {
+
+        final presentUser = DataService().loginUser(state.email, state.password);
+
+        if (presentUser == null) {
+          throw Exception('Invalid email or password.');
+        }
+        print( presentUser);
+        ref.read(userProvider.notifier).setUser(presentUser);
+        state = state.copyWith(
+          isSubmitting: false,
+          isSuccess: true,
+          // keep isLogin: true
+        );
+      } else {
+        final newUser = DataService().createUser(
+          state.name,
+          state.email,
+          state.password,
+          '',
+        );
+
+        ref.read(userProvider.notifier).setUser(newUser);
+      }
+
+      //
       //   await FirebaseFirestore.instance
       //       .collection('users')
       //       .doc(newUser.id)
       //       .set(newUser.toJson());
-      //   
-      //   ref.read(userProvider.notifier).setUser(newUser);
-      // }
+      //
 
-      // Mock user for now
-      final mockUser = UserModel(
-        id: 'user_${DateTime.now().millisecondsSinceEpoch}',
-        name: state.name.isEmpty ? 'Test User' : state.name,
-        email: state.email,
-        avatar: state.name.isEmpty ? 'T' : state.name[0].toUpperCase(), level: 0, xp: 0, streak: 0,
-      );
-      
-      // 🔥 ACCESS OTHER PROVIDER: ref.read()
-      // This is why code generation is powerful - ref is auto-injected!
-      ref.read(userProvider.notifier).setUser(mockUser);
-      
+      // }
+      //
       state = validatedState.copyWith(
         isSubmitting: false,
         isSuccess: true,
@@ -170,7 +176,7 @@ class Auth extends _$Auth {
   Future<void> logout() async {
     // Clear user from userProvider
     ref.read(userProvider.notifier).clearUser();
-    
+
     // Reset auth state
     state = const AuthState(
       isLogin: true,
@@ -179,7 +185,7 @@ class Auth extends _$Auth {
       name: '',
       infoMessage: 'Logged out successfully',
     );
-    
+
     // TODO: Firebase logout
     // await FirebaseAuth.instance.signOut();
   }

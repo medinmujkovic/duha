@@ -9,6 +9,7 @@ class UserModel with _$UserModel {
   required String? id,
   required String? name,
   required String? email,
+  required String? password,
   required String? avatar,
   required int level,
   required int  xp,
@@ -27,6 +28,7 @@ class UserModel with _$UserModel {
         email: null,
         name: null,
         avatar: null, level: 0, xp: 0, streak: 0,
+        password: null
       );
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>_$UserModelFromJson(json);

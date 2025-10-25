@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/common/widgets/signout_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
@@ -11,6 +9,7 @@ import 'package:duha_app/features/tasks/presentation/screens/task_detail_screen.
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -24,9 +23,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = _dataService.getTasks();
-    final user = ref.read( userProvider)!;
-    final incompleteTasks = tasks.where((t) => !t.isCompleted).length;
+    final user = ref.watch(userProvider);
+
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text('No user logged in')),
+      );
+    }
+    final tasks = _dataService.getTasksForUser(user.id ?? 'unknown');
+    final incompleteTasks = tasks.where((t) => !t.isCompleted).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -170,7 +175,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onToggle: () {
                     setState(() {
                       _dataService.toggleTaskCompletion(
-                          task.id, user.id ?? 'unknown');
+                          taskId:task.id, userId: user.id ?? 'unknown',ref:ref);
                     });
                   },
                 );

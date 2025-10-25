@@ -23,6 +23,7 @@ mixin _$UserModel {
   String? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
+  String? get password => throw _privateConstructorUsedError;
   String? get avatar => throw _privateConstructorUsedError;
   int get level => throw _privateConstructorUsedError;
   int get xp => throw _privateConstructorUsedError;
@@ -47,6 +48,7 @@ abstract class $UserModelCopyWith<$Res> {
       {String? id,
       String? name,
       String? email,
+      String? password,
       String? avatar,
       int level,
       int xp,
@@ -71,6 +73,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? id = freezed,
     Object? name = freezed,
     Object? email = freezed,
+    Object? password = freezed,
     Object? avatar = freezed,
     Object? level = null,
     Object? xp = null,
@@ -88,6 +91,10 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String?,
       avatar: freezed == avatar
           ? _value.avatar
@@ -121,6 +128,7 @@ abstract class _$$UserModelImplCopyWith<$Res>
       {String? id,
       String? name,
       String? email,
+      String? password,
       String? avatar,
       int level,
       int xp,
@@ -143,6 +151,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? name = freezed,
     Object? email = freezed,
+    Object? password = freezed,
     Object? avatar = freezed,
     Object? level = null,
     Object? xp = null,
@@ -160,6 +169,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
       email: freezed == email
           ? _value.email
           : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      password: freezed == password
+          ? _value.password
+          : password // ignore: cast_nullable_to_non_nullable
               as String?,
       avatar: freezed == avatar
           ? _value.avatar
@@ -188,6 +201,7 @@ class _$UserModelImpl extends _UserModel {
       {required this.id,
       required this.name,
       required this.email,
+      required this.password,
       required this.avatar,
       required this.level,
       required this.xp,
@@ -204,6 +218,8 @@ class _$UserModelImpl extends _UserModel {
   @override
   final String? email;
   @override
+  final String? password;
+  @override
   final String? avatar;
   @override
   final int level;
@@ -214,7 +230,7 @@ class _$UserModelImpl extends _UserModel {
 
   @override
   String toString() {
-    return 'UserModel(id: $id, name: $name, email: $email, avatar: $avatar, level: $level, xp: $xp, streak: $streak)';
+    return 'UserModel(id: $id, name: $name, email: $email, password: $password, avatar: $avatar, level: $level, xp: $xp, streak: $streak)';
   }
 
   @override
@@ -225,6 +241,8 @@ class _$UserModelImpl extends _UserModel {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.email, email) || other.email == email) &&
+            (identical(other.password, password) ||
+                other.password == password) &&
             (identical(other.avatar, avatar) || other.avatar == avatar) &&
             (identical(other.level, level) || other.level == level) &&
             (identical(other.xp, xp) || other.xp == xp) &&
@@ -233,8 +251,8 @@ class _$UserModelImpl extends _UserModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, name, email, avatar, level, xp, streak);
+  int get hashCode => Object.hash(
+      runtimeType, id, name, email, password, avatar, level, xp, streak);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.
@@ -257,6 +275,7 @@ abstract class _UserModel extends UserModel {
       {required final String? id,
       required final String? name,
       required final String? email,
+      required final String? password,
       required final String? avatar,
       required final int level,
       required final int xp,
@@ -272,6 +291,8 @@ abstract class _UserModel extends UserModel {
   String? get name;
   @override
   String? get email;
+  @override
+  String? get password;
   @override
   String? get avatar;
   @override

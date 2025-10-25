@@ -63,7 +63,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                         onChanged: (_) {
                           setState(() {
                             _dataService.toggleTaskCompletion(
-                                task.id,user?.id ?? '');
+                                taskId:task.id,userId:user?.id ?? '',ref:ref);
                           });
                         },
                       ),

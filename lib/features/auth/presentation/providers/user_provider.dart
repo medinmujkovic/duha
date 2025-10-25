@@ -6,7 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class User extends _$User {
   @override
   UserModel? build() {
@@ -24,24 +24,29 @@ class User extends _$User {
     state = null;
   }
 
+  void updateUser(UserModel Function(UserModel) updater) {
+    final s = state;
+    if (s != null) state = updater(s);
+  }
+
   // Update XP (auto-levels up)
   void updateXp(int xpToAdd) {
     if (state == null) return;
-    
+
     final newXp = state!.xp + xpToAdd;
     const xpPerLevel = 1000;
-    
+
     // Calculate new level
     final levelsGained = newXp ~/ xpPerLevel;
     final remainingXp = newXp % xpPerLevel;
-    
+
     final newLevel = state!.level + levelsGained;
-    
+
     state = state!.copyWith(
       xp: remainingXp,
       level: newLevel,
     );
-    
+
     // TODO: Save to Firestore
     // await FirebaseFirestore.instance
     //     .collection('users')
@@ -121,7 +126,7 @@ String userName(UserNameRef ref) {
 double xpProgress(XpProgressRef ref) {
   final user = ref.watch(userProvider);
   if (user == null) return 0.0;
-  
+
   const xpPerLevel = 1000;
   return (user.xp % xpPerLevel) / xpPerLevel;
 }

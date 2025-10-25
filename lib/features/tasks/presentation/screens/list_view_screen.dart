@@ -99,7 +99,7 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
                           onToggle: () {
                             setState(() {
                               _dataService.toggleTaskCompletion(
-                                  task.id, user?.id ?? '');
+                                  taskId:task.id, userId:user?.id ?? '',ref:ref);
                             });
                           },
                         )),

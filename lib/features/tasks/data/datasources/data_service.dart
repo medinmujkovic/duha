@@ -1,9 +1,11 @@
 import 'dart:math';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DataService {
   static final DataService _instance = DataService._internal();
@@ -13,17 +15,23 @@ class DataService {
   final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
   final List<GroupModel> _groups = [];
-  UserModel _currentUser = UserModel(
-    id: '1',
-    name: 'You',
-    email: 'you@example.com',
-    avatar: 'Y',
-    level: 12,
-    xp: 2450,
-    streak: 7,
-  );
+  final List<UserModel> _users = [UserModel(id: '1', name: 'amar', email: 'a@gmail.com', password: 'admin123!', avatar: '', level: 1, xp: 0, streak: 0)];
 
-  UserModel getCurrentUser() => _currentUser;
+  UserModel createUser( String name, String email, String password, String avatar) {
+    final user = UserModel(
+      id: Random().nextInt(100000).toString(),
+      name: name,
+      email: email,
+      avatar: avatar,
+      xp: 0,
+      level: 1,
+      streak: 0,
+      password: password 
+    );
+    _users.add(user);
+    return user;
+  }
+
 
   List<Task> getTasks() => _tasks;
 
@@ -48,7 +56,7 @@ class DataService {
           id: memberId,
           xp: Random().nextInt(5000),
           level: Random().nextInt(20),
-          streak: Random().nextInt(30), name: '', email: '', avatar: '',
+          streak: Random().nextInt(30), name: '', email: '', avatar: '', password: ""
         ));
       }
     }
@@ -68,7 +76,7 @@ class DataService {
         id: 'activity_$i',
         xp: Random().nextInt(500),
         level: Random().nextInt(20),
-        streak: Random().nextInt(30), name: '', email: '', avatar: '',
+        streak: Random().nextInt(30), name: '', email: '', avatar: '',password:""
       ));
     }
 
@@ -114,7 +122,11 @@ class DataService {
     _tasks.removeWhere((t) => t.id == taskId);
   }
 
-  void toggleTaskCompletion(String taskId, String userId) {
+  void toggleTaskCompletion({
+    required String taskId,
+    required String userId,
+    required WidgetRef ref,
+  }) {
     final task = _tasks.firstWhere((t) => t.id == taskId);
 
     if (task.completedByIds.contains(userId)) {
@@ -125,17 +137,23 @@ class DataService {
 
     if (task.isCompleted && task.completedAt == null) {
       task.completedAt = DateTime.now();
-      _currentUser = _currentUser.copyWith(
-        xp: _currentUser.xp + task.xpReward,
-      );
 
-      // Level up check
-      if (_currentUser.xp >= 3000) {
-        _currentUser = _currentUser.copyWith(
-          level: _currentUser.level + 1,
-          xp: _currentUser.xp - 3000,
-        );
-      }
+          // Safely update the Riverpod user
+      ref.read(userProvider.notifier).updateUser((u) {
+        // If somehow null, do nothing
+        if (u == null) return u;
+
+        int newXp = u.xp + task.xpReward;
+        int newLevel = u.level;
+
+        // Level-up loop (handles multiple levels if big rewards)
+        while (newXp >= 3000) {
+          newLevel += 1;
+          newXp -= 3000;
+        }
+
+        return u.copyWith(xp: newXp, level: newLevel);
+      });
     } else if (!task.isCompleted) {
       task.completedAt = null;
     }
@@ -176,5 +194,24 @@ class DataService {
   }
 
   getUserName(String id) {}
+
+  getTasksForUser(String id) {
+    return _tasks.where((t) => t.assigneeIds.contains(id)).toList();
+  }
+
+  UserModel? loginUser(String email, String password) {
+    print(_users);
+    try {
+      return _users.firstWhere(
+        (u) => u.email == email && u.password == password,
+      );
+    } on StateError {
+      return null;
+    }
+  }
+
+  List<UserModel> getAllUsers() {
+    return _users;
+  }
 
 }
