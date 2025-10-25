@@ -15,56 +15,68 @@ class DataService {
   final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
   final List<GroupModel> _groups = [];
-  final List<UserModel> _users = [UserModel(id: '1', name: 'amar', email: 'a@gmail.com', password: 'admin123!', avatar: '', level: 1, xp: 0, streak: 0)];
+  final List<UserModel> _users = [
+    UserModel(
+        id: '1',
+        name: 'amar',
+        email: 'a@gmail.com',
+        password: 'admin123!',
+        avatar: '',
+        level: 1,
+        xp: 0,
+        streak: 0)
+  ];
 
-  UserModel createUser( String name, String email, String password, String avatar) {
+  UserModel createUser(
+      String name, String email, String password, String avatar) {
     final user = UserModel(
-      id: Random().nextInt(100000).toString(),
-      name: name,
-      email: email,
-      avatar: avatar,
-      xp: 0,
-      level: 1,
-      streak: 0,
-      password: password 
-    );
+        id: Random().nextInt(100000).toString(),
+        name: name,
+        email: email,
+        avatar: avatar,
+        xp: 0,
+        level: 1,
+        streak: 0,
+        password: password);
     _users.add(user);
     return user;
   }
-
 
   List<Task> getTasks() => _tasks;
 
   List<Task> getTasksForGroup(String groupId) =>
       _tasks.where((t) => t.groupId == groupId).toList();
 
-  List<Task> getCompletedTasks() =>
-      _tasks.where((t) => t.isCompleted).toList();
+  List<Task> getCompletedTasks() => _tasks.where((t) => t.isCompleted).toList();
 
   List<SectionModel> getSections() =>
       _sections..sort((a, b) => a.order.compareTo(b.order));
 
-  List<GroupModel> getGroups(String id) => _groups.where((g) => g.memberIds.contains(id)).toList();
+  List<GroupModel> getGroups(String id) =>
+      _groups.where((g) => g.memberIds.contains(id)).toList();
 
-  List<UserModel> getLeaderboard(String id ) {
+  List<UserModel> getLeaderboard(String id) {
     final userActivities = <UserModel>[];
 
     for (var group in getGroups(id)) {
       for (var memberId in group.memberIds) {
         // Simulate fetching user activity data
         userActivities.add(UserModel(
-          id: memberId,
-          xp: Random().nextInt(5000),
-          level: Random().nextInt(20),
-          streak: Random().nextInt(30), name: '', email: '', avatar: '', password: ""
-        ));
+            id: memberId,
+            xp: Random().nextInt(5000),
+            level: Random().nextInt(20),
+            streak: Random().nextInt(30),
+            name: '',
+            email: '',
+            avatar: '',
+            password: ""));
       }
     }
 
-    userActivities.sort((a, b) => int.parse(b.xp as String).compareTo(int.parse(a.xp as String)));
+    userActivities.sort((a, b) =>
+        int.parse(b.xp as String).compareTo(int.parse(a.xp as String)));
 
     return userActivities;
-
   }
 
   List<UserModel> getRecentActivities() {
@@ -73,17 +85,18 @@ class DataService {
     // Simulate recent activities
     for (int i = 0; i < 10; i++) {
       activities.add(UserModel(
-        id: 'activity_$i',
-        xp: Random().nextInt(500),
-        level: Random().nextInt(20),
-        streak: Random().nextInt(30), name: '', email: '', avatar: '',password:""
-      ));
+          id: 'activity_$i',
+          xp: Random().nextInt(500),
+          level: Random().nextInt(20),
+          streak: Random().nextInt(30),
+          name: '',
+          email: '',
+          avatar: '',
+          password: ""));
     }
 
     return activities;
   }
-
-
 
   void addTask({
     required String title,
@@ -138,7 +151,7 @@ class DataService {
     if (task.isCompleted && task.completedAt == null) {
       task.completedAt = DateTime.now();
 
-          // Safely update the Riverpod user
+      // Safely update the Riverpod user
       ref.read(userProvider.notifier).updateUser((u) {
         // If somehow null, do nothing
         if (u == null) return u;
@@ -213,5 +226,4 @@ class DataService {
   List<UserModel> getAllUsers() {
     return _users;
   }
-
 }

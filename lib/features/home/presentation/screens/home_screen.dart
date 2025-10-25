@@ -1,5 +1,6 @@
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/common/widgets/signout_button.dart';
+import 'package:duha_app/core/constants/app_constants.dart';
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/filtering/presentation/screens/filter_sheet.dart';
@@ -27,10 +28,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (user == null) {
       return const Scaffold(
-        body: Center(child: Text('No user logged in')),
+        body: Center(child: Text(AppMessages.noUserLoggedIn)),
       );
     }
-    final tasks = _dataService.getTasksForUser(user.id ?? 'unknown');
+    final tasks = _dataService.getTasksForUser(user.id ?? '0');
     final incompleteTasks = tasks.where((t) => !t.isCompleted).toList();
 
     return Scaffold(
@@ -38,8 +39,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Duha App', style: TextStyle(fontSize: 20)),
-            Text('Welcome back, ${user.name}',
+            const Text(AppMessages.appName, style: TextStyle(fontSize: 20)),
+            Text('${AppMessages.welcome} ${user.name}',
                 style: const TextStyle(
                     fontSize: 12, fontWeight: FontWeight.normal)),
           ],
@@ -81,7 +82,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    '🔥 You\'re crushing it!',
+                    AppMessages.cheering,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -104,7 +105,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   Expanded(
                     child: _buildStatCard(
-                      'Level',
+                      AppMessages.level,
                       user.level.toString(),
                       Icons.emoji_events,
                       Colors.purple,
@@ -113,7 +114,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
-                      'Streak',
+                      AppMessages.streak,
                       '${user.streak}d',
                       Icons.local_fire_department,
                       Colors.orange,
@@ -122,7 +123,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
-                      'XP',
+                      AppMessages.xp,
                       user.xp.toString(),
                       Icons.star,
                       Colors.blue,
@@ -141,7 +142,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Today\'s Tasks',
+                    AppMessages.todaysTasks,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   TextButton.icon(
@@ -149,7 +150,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       showTaskCreate(context, null);
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('Add'),
+                    label: const Text(AppMessages.add),
                   ),
                 ],
               ),
@@ -175,7 +176,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   onToggle: () {
                     setState(() {
                       _dataService.toggleTaskCompletion(
-                          taskId:task.id, userId: user.id ?? 'unknown',ref:ref);
+                          taskId:task.id, userId: user.id ?? '0',ref:ref);
                     });
                   },
                 );
