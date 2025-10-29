@@ -1,6 +1,7 @@
 // lib/presentation/group/group_detail_screen.dart
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,6 @@ class GroupDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
-
   final DataService _dataService = DataService();
   bool _notificationsEnabled = true;
 
@@ -79,7 +79,8 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.exit_to_app, color: Colors.red),
-              title: const Text('Napusti grupu', style: TextStyle(color: Colors.red)),
+              title: const Text('Napusti grupu',
+                  style: TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.pop(context);
                 _showLeaveGroupDialog();
@@ -93,7 +94,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
 
   void _showAddMemberDialog() {
     final emailController = TextEditingController();
-
+    final user = ref.read(userProvider);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -119,6 +120,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
           ),
           FilledButton(
             onPressed: () {
+              _dataService.sendGroupInvite(user!.email!,emailController.text,widget.groupId);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -160,12 +162,9 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     final tasks = _dataService.getTasksForGroup(widget.groupId);
-
 
     return Scaffold(
       appBar: AppBar(
@@ -203,7 +202,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
                 final task = tasks.where((t) => !t.isCompleted).toList()[index];
                 return GroupTaskCard(
                   task: task,
-                  onTap: () => showTaskDetail(context,_dataService, task),
+                  onTap: () => showTaskDetail(context, _dataService, task),
                 );
               },
             ),
@@ -214,6 +213,4 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
       ),
     );
   }
-
 }
-

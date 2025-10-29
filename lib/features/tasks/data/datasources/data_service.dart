@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
+import 'package:duha_app/features/notifications/data/models/notification_enum.dart';
+import 'package:duha_app/features/notifications/data/models/notifications_model.dart';
+import 'package:duha_app/features/notifications/data/models/token_model.dart';
 import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_enum.dart';
@@ -15,11 +18,43 @@ class DataService {
   final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
   final List<GroupModel> _groups = [];
+  final List<Token> _tokens = [];
+  final List<Notifications> _notifications = [
+    Notifications(
+      id: '2',
+      userId: '1',
+      name: 'Sara',
+      content: 'just leveled up and earned 50 XP!',
+      groupId: null,
+      type: NotificationType.friendsUpdate,
+      viewed: true,
+      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+    ),
+    Notifications(
+      id: '4',
+      userId: '1',
+      name: 'Leo',
+      content: 'completed the 7-day streak! 🔥',
+      groupId: null,
+      type: NotificationType.friendsUpdate,
+      viewed: false,
+      createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+    ),
+  ];
   final List<UserModel> _users = [
-    UserModel(
+    const UserModel(
         id: '1',
         name: 'amar',
         email: 'a@gmail.com',
+        password: 'admin123!',
+        avatar: '',
+        level: 1,
+        xp: 0,
+        streak: 0),
+    const UserModel(
+        id: '2',
+        name: 'amar2',
+        email: 'a2@gmail.com',
         password: 'admin123!',
         avatar: '',
         level: 1,
@@ -52,13 +87,13 @@ class DataService {
   List<SectionModel> getSections() =>
       _sections..sort((a, b) => a.order.compareTo(b.order));
 
-  List<GroupModel> getGroups(String id) =>
+  List<GroupModel> getUserGroups(String id) =>
       _groups.where((g) => g.memberIds.contains(id)).toList();
 
   List<UserModel> getLeaderboard(String id) {
     final userActivities = <UserModel>[];
 
-    for (var group in getGroups(id)) {
+    for (var group in getUserGroups(id)) {
       for (var memberId in group.memberIds) {
         // Simulate fetching user activity data
         userActivities.add(UserModel(
@@ -79,23 +114,8 @@ class DataService {
     return userActivities;
   }
 
-  List<UserModel> getRecentActivities() {
-    final activities = <UserModel>[];
-
-    // Simulate recent activities
-    for (int i = 0; i < 10; i++) {
-      activities.add(UserModel(
-          id: 'activity_$i',
-          xp: Random().nextInt(500),
-          level: Random().nextInt(20),
-          streak: Random().nextInt(30),
-          name: '',
-          email: '',
-          avatar: '',
-          password: ""));
-    }
-
-    return activities;
+  List<Notifications> getActivitiesForUser(String id) {
+    return _notifications.where((n) => n.userId == id).toList();
   }
 
   void addTask({
@@ -189,12 +209,16 @@ class DataService {
     section.name = newName;
   }
 
-  void addGroup(String name, String color) {
+  void addGroup(
+    String name,
+    String memberId,
+    String color,
+  ) {
     _groups.add(GroupModel(
       id: DateTime.now().toString(),
       name: name,
       color: color,
-      memberIds: ['You'],
+      memberIds: [memberId],
       shareLink:
           'https://projectnova.app/join/${DateTime.now().millisecondsSinceEpoch}',
       isShared: true,
@@ -226,4 +250,33 @@ class DataService {
   List<UserModel> getAllUsers() {
     return _users;
   }
+
+    void deleteNotification(String id) {
+    _notifications.removeWhere((n) => n.id == id);
+  }
+
+  void sendGroupInvite(
+    String emailSender, String emailReciever, String groupId) {
+    final user = getUserByEmail(emailReciever);
+    final group = getGroupById(groupId);
+
+    _notifications.add(Notifications(
+        id: Random().toString(),
+        userId: user!.id!,
+        name: emailSender,
+        content: group!.name,
+        groupId: groupId,
+        type: NotificationType.groupInvite,
+        viewed: false,
+        createdAt: DateTime.now()));
+  }
+
+  UserModel? getUserByEmail(String email) {
+    return _users.firstWhere((u) => u.email == email);
+  }
+
+  GroupModel? getGroupById(String groupId) {
+    return _groups.firstWhere((g) => g.id == groupId);
+  }
+
 }

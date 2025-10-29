@@ -54,7 +54,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
       // Replace this with your actual API call
       
       // For now, using local data service
-      final groups = _dataService.getGroups(userId);
+      final groups = _dataService.getUserGroups(userId);
 
       if (!mounted) return;
       setState(() {
@@ -283,7 +283,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
 
                   if (userId != null) {
                     // Add group with user ID
-                    _dataService.addGroup(nameController.text, selectedColor);
+                    _dataService.addGroup(nameController.text,userId,selectedColor);
                     if (mounted) Navigator.pop(context);
                     
                     // Reload groups
