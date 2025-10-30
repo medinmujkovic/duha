@@ -108,7 +108,7 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
                       child: OutlinedButton.icon(
                         onPressed: () {
                           print(section.id);
-                          showTaskCreate(context, null, sectionId: section.id);
+                          showTaskCreate(context, null,user?.id, sectionId: section.id);
                         },
                         icon: const Icon(Icons.add),
                         label: const Text('Add Task'),
@@ -123,7 +123,7 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
             ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          showTaskCreate(context, null);
+          showTaskCreate(context, null,user?.id);
         },
       ),
     );

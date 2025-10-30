@@ -147,7 +147,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   TextButton.icon(
                     onPressed: () {
-                      showTaskCreate(context, null);
+                      showTaskCreate(context, null,user.id);
                     },
                     icon: const Icon(Icons.add),
                     label: const Text(AppMessages.add),
@@ -187,7 +187,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          showTaskCreate(context, null);
+          showTaskCreate(context, null, user.id);
         },
       ),
     );

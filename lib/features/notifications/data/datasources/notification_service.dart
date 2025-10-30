@@ -1,4 +1,4 @@
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 
 class NotificationService {
   void initialize() {

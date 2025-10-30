@@ -1,8 +1,9 @@
 import 'package:duha_app/common/utils/priority_colors.dart';
+import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/data/models/task_enum.dart';
+import 'package:duha_app/features/tasks/data/enums/task_enum.dart';
 import 'package:flutter/material.dart';
-import '../../data/models/task_model.dart';
+import '../../data/models/task/task_model.dart';
 
 
 class TaskCreateSheet extends StatefulWidget {
@@ -10,10 +11,12 @@ class TaskCreateSheet extends StatefulWidget {
   final String? groupId;
   final Task? task; // Ako editujemo postojeći task
   final String? sectionId;  
+  final String? userId;
 
   const TaskCreateSheet({
     super.key,
     required this.scrollController,
+    this.userId,
     this.groupId,    
     this.sectionId,
     this.task,
@@ -35,18 +38,13 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
   DateTime? _selectedDeadline;
   String? _selectedRepeat;
   List<String> _selectedAssignees = [];
-  final List<String> _availableAssignees = [
-    'You',
-    'Sarah',
-    'Ahmed',
-    'Alex',
-    'Team'
-  ];
+  List<UserModel> _availableAssignees = [];
   
 
   @override
   void initState() {
     super.initState();
+      _availableAssignees = _dataService.getGroupMembers(widget.groupId!);
     if (widget.task != null) {
       // Edit mode
       _titleController.text = widget.task!.title;
@@ -57,7 +55,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
       _selectedAssignees = List.from(widget.task!.assigneeIds ?? []);
     } else {
       // Create mode
-      _selectedAssignees = ['You'];
+      _selectedAssignees = [];
     }
   }
 
@@ -287,17 +285,17 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
               spacing: 8,
               runSpacing: 8,
               children: _availableAssignees.map((assignee) {
-                final isSelected = _selectedAssignees.contains(assignee);
+                final isSelected = _selectedAssignees.contains(assignee.id);
                 return FilterChip(
-                  label: Text(assignee),
+                  label: Text(assignee.id == widget.userId ? 'You' : assignee.name!),
                   selected: isSelected,
                   onSelected: (selected) {
                     setState(() {
                       if (selected) {
-                        _selectedAssignees.add(assignee);
+                        _selectedAssignees.add(assignee.id!);
                       } else {
                         if (_selectedAssignees.length > 1) {
-                          _selectedAssignees.remove(assignee);
+                          _selectedAssignees.remove(assignee.id);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -352,7 +350,7 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
             ],
 
             // Info banner for Any Member task
-            if (_selectedTaskType == TaskType.allMembers &&
+            if (_selectedTaskType == TaskType.specificMembers &&
                 _selectedAssignees.length > 1) ...[
               const SizedBox(height: 16),
               Container(
@@ -458,16 +456,20 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
         );
       } else {
         // Update existing task
-        widget.task!.title = _titleController.text;
-        widget.task!.description = _descriptionController.text;
-        widget.task!.priority = _selectedPriority;
-        widget.task!.deadline = _selectedDeadline;
-        widget.task!.repeat = _selectedRepeat;
-        widget.task!.sectionId = widget.sectionId;
-        widget.task!.assigneeIds = _selectedAssignees;
-        widget.task!.type = _selectedTaskType;
+          _dataService.updateTask(
+            id: widget.task!.id,
+            title: _titleController.text,
+            description: _descriptionController.text,
+            priority: _selectedPriority,
+            deadline: _selectedDeadline,
+            repeat: _selectedRepeat,
+            sectionId: widget.sectionId,
+            assigneeIds: _selectedAssignees,
+            groupId: widget.groupId,
+            taskType: _selectedTaskType,
+          );
+        Navigator.pop(context);
       }
-      Navigator.pop(context);
     }
   }
 }

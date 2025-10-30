@@ -1,11 +1,13 @@
 import 'package:duha_app/core/util/task_utils.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/presentation/widgets/info_card.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/subtask/subtask_model.dart';
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TaskDetailSheet extends StatefulWidget {
+class TaskDetailSheet extends ConsumerStatefulWidget {
   final Task task;
   final ScrollController scrollController;
 
@@ -18,10 +20,10 @@ class TaskDetailSheet extends StatefulWidget {
   });
 
   @override
-  State<TaskDetailSheet> createState() => _TaskDetailSheetState();
+  ConsumerState<TaskDetailSheet> createState() => _TaskDetailSheetState();
 }
 
-class _TaskDetailSheetState extends State<TaskDetailSheet> {
+class _TaskDetailSheetState extends ConsumerState<TaskDetailSheet> {
   late List<Subtask> _subtasks;
 
 
@@ -43,6 +45,7 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
     final completedCount = _subtasks.where((s) => s.isCompleted).length;
     final progress =
         _subtasks.isEmpty ? 0.0 : completedCount / _subtasks.length;
+    final user = ref.watch(userProvider);
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -159,7 +162,7 @@ class _TaskDetailSheetState extends State<TaskDetailSheet> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    showTaskCreate(context, null, task: widget.task);
+                    showTaskCreate(context, null,user?.id , task: widget.task);
                   },
                   icon: const Icon(Icons.edit),
                   label: const Text('Uredi'),

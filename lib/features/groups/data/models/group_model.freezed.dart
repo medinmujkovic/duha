@@ -22,8 +22,10 @@ Group _$GroupFromJson(Map<String, dynamic> json) {
 mixin _$Group {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get color => throw _privateConstructorUsedError;
   String get ownerId => throw _privateConstructorUsedError;
   List<String> get memberIds => throw _privateConstructorUsedError;
+  String get shareLink => throw _privateConstructorUsedError;
   @TimestampConverter()
   DateTime get createdAt => throw _privateConstructorUsedError;
 
@@ -44,8 +46,10 @@ abstract class $GroupCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
+      String color,
       String ownerId,
       List<String> memberIds,
+      String shareLink,
       @TimestampConverter() DateTime createdAt});
 }
 
@@ -66,8 +70,10 @@ class _$GroupCopyWithImpl<$Res, $Val extends Group>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? color = null,
     Object? ownerId = null,
     Object? memberIds = null,
+    Object? shareLink = null,
     Object? createdAt = null,
   }) {
     return _then(_value.copyWith(
@@ -79,6 +85,10 @@ class _$GroupCopyWithImpl<$Res, $Val extends Group>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      color: null == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String,
       ownerId: null == ownerId
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
@@ -87,6 +97,10 @@ class _$GroupCopyWithImpl<$Res, $Val extends Group>
           ? _value.memberIds
           : memberIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      shareLink: null == shareLink
+          ? _value.shareLink
+          : shareLink // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -105,8 +119,10 @@ abstract class _$$GroupImplCopyWith<$Res> implements $GroupCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
+      String color,
       String ownerId,
       List<String> memberIds,
+      String shareLink,
       @TimestampConverter() DateTime createdAt});
 }
 
@@ -125,8 +141,10 @@ class __$$GroupImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? color = null,
     Object? ownerId = null,
     Object? memberIds = null,
+    Object? shareLink = null,
     Object? createdAt = null,
   }) {
     return _then(_$GroupImpl(
@@ -138,6 +156,10 @@ class __$$GroupImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      color: null == color
+          ? _value.color
+          : color // ignore: cast_nullable_to_non_nullable
+              as String,
       ownerId: null == ownerId
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
@@ -146,6 +168,10 @@ class __$$GroupImplCopyWithImpl<$Res>
           ? _value._memberIds
           : memberIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      shareLink: null == shareLink
+          ? _value.shareLink
+          : shareLink // ignore: cast_nullable_to_non_nullable
+              as String,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -160,8 +186,10 @@ class _$GroupImpl implements _Group {
   const _$GroupImpl(
       {required this.id,
       required this.name,
+      required this.color,
       required this.ownerId,
       required final List<String> memberIds,
+      required this.shareLink,
       @TimestampConverter() required this.createdAt})
       : _memberIds = memberIds;
 
@@ -173,6 +201,8 @@ class _$GroupImpl implements _Group {
   @override
   final String name;
   @override
+  final String color;
+  @override
   final String ownerId;
   final List<String> _memberIds;
   @override
@@ -183,12 +213,14 @@ class _$GroupImpl implements _Group {
   }
 
   @override
+  final String shareLink;
+  @override
   @TimestampConverter()
   final DateTime createdAt;
 
   @override
   String toString() {
-    return 'Group(id: $id, name: $name, ownerId: $ownerId, memberIds: $memberIds, createdAt: $createdAt)';
+    return 'Group(id: $id, name: $name, color: $color, ownerId: $ownerId, memberIds: $memberIds, shareLink: $shareLink, createdAt: $createdAt)';
   }
 
   @override
@@ -198,17 +230,20 @@ class _$GroupImpl implements _Group {
             other is _$GroupImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.color, color) || other.color == color) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
             const DeepCollectionEquality()
                 .equals(other._memberIds, _memberIds) &&
+            (identical(other.shareLink, shareLink) ||
+                other.shareLink == shareLink) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, name, ownerId,
-      const DeepCollectionEquality().hash(_memberIds), createdAt);
+  int get hashCode => Object.hash(runtimeType, id, name, color, ownerId,
+      const DeepCollectionEquality().hash(_memberIds), shareLink, createdAt);
 
   /// Create a copy of Group
   /// with the given fields replaced by the non-null parameter values.
@@ -230,8 +265,10 @@ abstract class _Group implements Group {
   const factory _Group(
       {required final String id,
       required final String name,
+      required final String color,
       required final String ownerId,
       required final List<String> memberIds,
+      required final String shareLink,
       @TimestampConverter() required final DateTime createdAt}) = _$GroupImpl;
 
   factory _Group.fromJson(Map<String, dynamic> json) = _$GroupImpl.fromJson;
@@ -241,9 +278,13 @@ abstract class _Group implements Group {
   @override
   String get name;
   @override
+  String get color;
+  @override
   String get ownerId;
   @override
   List<String> get memberIds;
+  @override
+  String get shareLink;
   @override
   @TimestampConverter()
   DateTime get createdAt;

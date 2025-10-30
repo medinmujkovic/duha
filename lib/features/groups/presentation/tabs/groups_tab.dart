@@ -1,5 +1,6 @@
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/features/groups/presentation/screens/group_detail_screen.dart';
+import 'package:duha_app/features/groups/data/models/group_model.dart';
+import 'package:duha_app/features/groups/presentation/screens/group_screen.dart';
 import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class GroupsTab extends ConsumerStatefulWidget {
 class _GroupsTabState extends ConsumerState<GroupsTab>
     with AutomaticKeepAliveClientMixin {
   final DataService _dataService = DataService();
-  List<GroupModel> _groups = [];
+  List<Group> _groups = [];
   bool _isLoading = true;
   String? _error;
 
@@ -165,7 +166,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            GroupDetailScreen(groupId: group.id),
+                            GroupScreen(groupId: group.id),
                       ),
                     );
                   },
@@ -303,7 +304,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
     );
   }
 
-  void _showShareDialog(BuildContext context, GroupModel group) {
+  void _showShareDialog(BuildContext context, Group group) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

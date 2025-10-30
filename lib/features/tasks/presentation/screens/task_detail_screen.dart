@@ -1,11 +1,11 @@
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/data/models/task_enum.dart';
+import 'package:duha_app/features/tasks/data/enums/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask/subtask_model.dart';
-import 'package:duha_app/features/tasks/data/models/task_comment.dart';
-import 'package:duha_app/features/tasks/data/models/taskattachment_model.dart';
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/tasks/data/models/task_comment/task_comment.dart';
+import 'package:duha_app/features/tasks/data/models/task_attachment/task_attachment.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,7 +34,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
           IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              showTaskDetail(context,_dataService, task);
+              showTaskDetail(context, _dataService, task);
             },
           ),
           IconButton(
@@ -61,10 +61,11 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                       Checkbox(
                         value: task.isCompleted,
                         onChanged: (_) {
-                          setState(() {
-                            _dataService.toggleTaskCompletion(
-                                taskId:task.id,userId:user?.id ?? '',ref:ref);
-                          });
+                          _dataService.toggleTaskCompletion(
+                            taskId: task.id,
+                            userId: ref.read(userProvider)?.id ?? '',
+                            ref: ref,
+                          );
                         },
                       ),
                       Expanded(
@@ -140,8 +141,8 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                             child: LinearProgressIndicator(
                               value: task.completionProgress,
                               backgroundColor: Colors.grey[300],
-                              valueColor:
-                                  const AlwaysStoppedAnimation<Color>(Colors.blue),
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.blue),
                               minHeight: 12,
                             ),
                           ),
@@ -325,7 +326,8 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                                     backgroundColor: const Color(0xFF7C3AED),
                                     child: Text(
                                       comment.userName[0].toUpperCase(),
-                                      style: const TextStyle(color: Colors.white),
+                                      style:
+                                          const TextStyle(color: Colors.white),
                                     ),
                                   ),
                                   const SizedBox(width: 12),

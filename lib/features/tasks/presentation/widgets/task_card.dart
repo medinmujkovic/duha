@@ -1,5 +1,5 @@
 import 'package:duha_app/common/utils/priority_colors.dart';
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:flutter/material.dart';
 
 class TaskCard extends StatelessWidget {

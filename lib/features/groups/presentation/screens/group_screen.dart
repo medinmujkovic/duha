@@ -1,5 +1,6 @@
 // lib/presentation/group/group_detail_screen.dart
 import 'package:duha_app/common/widgets/new_task_button.dart';
+import 'package:duha_app/core/util/group_utils.dart';
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
@@ -7,23 +8,26 @@ import 'package:duha_app/features/groups/presentation/widgets/group_task_card.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GroupDetailScreen extends ConsumerStatefulWidget {
+class GroupScreen extends ConsumerStatefulWidget {
   final String groupId;
 
-  const GroupDetailScreen({
+  const GroupScreen({
     super.key,
     required this.groupId,
   });
 
   @override
-  ConsumerState<GroupDetailScreen> createState() => _GroupDetailScreenState();
+  ConsumerState<GroupScreen> createState() => _GroupScreenState();
 }
 
-class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
+class _GroupScreenState extends ConsumerState<GroupScreen> {
   final DataService _dataService = DataService();
   bool _notificationsEnabled = true;
 
   void _showGroupMenu() {
+
+    final user = ref.watch(userProvider);
+
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -74,7 +78,8 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
               title: const Text('Postavke grupe'),
               onTap: () {
                 Navigator.pop(context);
-                // TODO: Implementirati postavke
+                final group = _dataService.getGroupById(widget.groupId);
+                showGroupSettings(context,_dataService,group!);
               },
             ),
             ListTile(
@@ -82,6 +87,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
               title: const Text('Napusti grupu',
                   style: TextStyle(color: Colors.red)),
               onTap: () {
+                _dataService.leaveGroup(user!.id!);
                 Navigator.pop(context);
                 _showLeaveGroupDialog();
               },
@@ -165,6 +171,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final tasks = _dataService.getTasksForGroup(widget.groupId);
+    final user = ref.watch(userProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -208,7 +215,7 @@ class _GroupDetailScreenState extends ConsumerState<GroupDetailScreen> {
             ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          showTaskCreate(context, widget.groupId);
+          showTaskCreate(context, widget.groupId, user!.id);
         },
       ),
     );

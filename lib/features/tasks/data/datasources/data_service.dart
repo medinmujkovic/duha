@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
+import 'package:duha_app/features/groups/data/models/group_model.dart';
 import 'package:duha_app/features/notifications/data/models/notification_enum.dart';
 import 'package:duha_app/features/notifications/data/models/notifications_model.dart';
 import 'package:duha_app/features/notifications/data/models/token_model.dart';
-import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
-import 'package:duha_app/features/tasks/data/models/task_enum.dart';
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/tasks/data/enums/task_enum.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DataService {
@@ -17,7 +17,7 @@ class DataService {
 
   final List<Task> _tasks = [];
   final List<SectionModel> _sections = [];
-  final List<GroupModel> _groups = [];
+  final List<Group> _groups = [];
   final List<Token> _tokens = [];
   final List<Notifications> _notifications = [
     Notifications(
@@ -87,7 +87,7 @@ class DataService {
   List<SectionModel> getSections() =>
       _sections..sort((a, b) => a.order.compareTo(b.order));
 
-  List<GroupModel> getUserGroups(String id) =>
+  List<Group> getUserGroups(String id) =>
       _groups.where((g) => g.memberIds.contains(id)).toList();
 
   List<UserModel> getLeaderboard(String id) {
@@ -151,6 +151,44 @@ class DataService {
     ));
   }
 
+  void updateTask({
+    required String id,
+    required String title,
+    String description = '',
+    Priority priority = Priority.medium,
+    DateTime? deadline,
+    String? repeat,
+    String? sectionId,
+    String? groupId,
+    TaskType? taskType,
+    required List<String> assigneeIds,
+  }) {
+    final idx = _tasks.indexWhere((t) => t.id == id);
+    if (idx == -1) {
+      throw Exception('Task with id=$id not found');
+    }
+
+    final current = _tasks[idx];
+
+    final updated = current.copyWith(
+      title: title,
+      description: description.isEmpty ? current.description : description,
+      priority: priority,
+      deadline: deadline ?? current.deadline,
+      repeat: repeat ?? current.repeat,
+      sectionId: sectionId ?? current.sectionId,
+      groupId: groupId ?? current.groupId,
+      type: taskType ?? current.type,
+      assigneeIds: assigneeIds,
+    );
+
+    _tasks[idx] = updated;
+
+    // If this lives in a notifier/ChangeNotifier, remember to notify:
+    // notifyListeners();  // for ChangeNotifier
+    // state = [..._tasks]; // for Riverpod StateNotifier<List<Task>>
+  }
+
   void deleteTask(String taskId) {
     _tasks.removeWhere((t) => t.id == taskId);
   }
@@ -160,26 +198,36 @@ class DataService {
     required String userId,
     required WidgetRef ref,
   }) {
-    final task = _tasks.firstWhere((t) => t.id == taskId);
+    // find the task
+    final idx = _tasks.indexWhere((t) => t.id == taskId);
+    if (idx == -1) return;
 
-    if (task.completedByIds.contains(userId)) {
-      task.completedByIds.remove(userId);
+    final task = _tasks[idx];
+    final isAlreadyCompleted = task.completedByIds.contains(userId);
+
+    // create updated completedByIds list immutably
+    final updatedCompletedByIds = List<String>.from(task.completedByIds);
+    if (isAlreadyCompleted) {
+      updatedCompletedByIds.remove(userId);
     } else {
-      task.completedByIds.add(userId);
+      updatedCompletedByIds.add(userId);
     }
 
-    if (task.isCompleted && task.completedAt == null) {
-      task.completedAt = DateTime.now();
+    // create updated task (immutably)
+    var updatedTask = task.copyWith(completedByIds: updatedCompletedByIds);
 
-      // Safely update the Riverpod user
+    // update completedAt
+    if (updatedTask.isCompleted && updatedTask.completedAt == null) {
+      updatedTask = updatedTask.copyWith(completedAt: DateTime.now());
+
+      // ✅ safely update user XP via Riverpod provider
       ref.read(userProvider.notifier).updateUser((u) {
-        // If somehow null, do nothing
         if (u == null) return u;
 
-        int newXp = u.xp + task.xpReward;
+        int newXp = u.xp + updatedTask.xpReward;
         int newLevel = u.level;
 
-        // Level-up loop (handles multiple levels if big rewards)
+        // Level up if needed
         while (newXp >= 3000) {
           newLevel += 1;
           newXp -= 3000;
@@ -187,9 +235,12 @@ class DataService {
 
         return u.copyWith(xp: newXp, level: newLevel);
       });
-    } else if (!task.isCompleted) {
-      task.completedAt = null;
+    } else if (!updatedTask.isCompleted) {
+      updatedTask = updatedTask.copyWith(completedAt: null);
     }
+
+    // Replace the task in the list immutably
+    _tasks[idx] = updatedTask;
   }
 
   void addSection(String name) {
@@ -214,20 +265,32 @@ class DataService {
     String memberId,
     String color,
   ) {
-    _groups.add(GroupModel(
+    _groups.add(Group(
       id: DateTime.now().toString(),
       name: name,
       color: color,
+      ownerId: memberId,
       memberIds: [memberId],
       shareLink:
           'https://projectnova.app/join/${DateTime.now().millisecondsSinceEpoch}',
-      isShared: true,
+      createdAt: DateTime.now(),
     ));
   }
 
   void addGroupMembers(String groupId, List<String> memberIds) {
     final group = _groups.firstWhere((g) => g.id == groupId);
     group.memberIds.addAll(memberIds);
+  }
+
+  List<UserModel> getGroupMembers(String groupId) {
+    final group = _groups.firstWhere((g) => g.id == groupId);
+    final memberIds = group.memberIds;
+
+    return memberIds.map((id) => getUserById(id)).toList();
+  }
+
+  UserModel getUserById(String id) {
+    return _users.firstWhere((u) => u.id == id);
   }
 
   getUserName(String id) {}
@@ -251,12 +314,12 @@ class DataService {
     return _users;
   }
 
-    void deleteNotification(String id) {
+  void deleteNotification(String id) {
     _notifications.removeWhere((n) => n.id == id);
   }
 
   void sendGroupInvite(
-    String emailSender, String emailReciever, String groupId) {
+      String emailSender, String emailReciever, String groupId) {
     final user = getUserByEmail(emailReciever);
     final group = getGroupById(groupId);
 
@@ -275,8 +338,11 @@ class DataService {
     return _users.firstWhere((u) => u.email == email);
   }
 
-  GroupModel? getGroupById(String groupId) {
+  Group? getGroupById(String groupId) {
     return _groups.firstWhere((g) => g.id == groupId);
   }
 
+  void leaveGroup(String id) {
+    _groups.removeWhere((u) => u.id == id);
+  }
 }

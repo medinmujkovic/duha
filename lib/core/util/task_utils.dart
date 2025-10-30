@@ -1,6 +1,6 @@
   import 'package:duha_app/features/tasks/presentation/widgets/task_detail_sheet.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/data/models/task_model.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_create_sheet.dart';
 import 'package:flutter/material.dart';
 
@@ -25,7 +25,7 @@ void showTaskDetail(BuildContext context, DataService dataService, Task task,{ s
     );
   }
 
-    void showTaskCreate(BuildContext context, String? groupId, { sectionId, task } ) {
+    void showTaskCreate(BuildContext context, String? groupId, String? id, { sectionId, task } ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -38,7 +38,7 @@ void showTaskDetail(BuildContext context, DataService dataService, Task task,{ s
         maxChildSize: 0.95,
         expand: false,
         builder: (context, scrollController) => TaskCreateSheet(
-          scrollController: scrollController, groupId: groupId, sectionId: sectionId ?? task?.sectionId, task: task,
+          scrollController: scrollController, groupId: groupId, userId: id, sectionId: sectionId ?? task?.sectionId, task: task,
         ),
       ),
     );

@@ -9,8 +9,10 @@ class Group with _$Group {
   const factory Group({
     required String id,
     required String name,
+    required String color,
     required String ownerId,
     required List<String> memberIds,
+    required String shareLink,
     @TimestampConverter() required DateTime createdAt,
   }) = _Group;
 
