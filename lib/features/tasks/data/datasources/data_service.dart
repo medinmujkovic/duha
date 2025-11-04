@@ -342,7 +342,28 @@ class DataService {
     return _groups.firstWhere((g) => g.id == groupId);
   }
 
-  void leaveGroup(String id) {
-    _groups.removeWhere((u) => u.id == id);
+void leaveGroup(String groupID, String memberId) {
+    final index = _groups.indexWhere((g) => g.id == groupID);
+    
+    if (index != -1) {
+      final group = _groups[index];
+      final updatedMemberIds = List<String>.from(group.memberIds ?? [])
+        ..remove(memberId);
+      
+      _groups[index] = group.copyWith(memberIds: updatedMemberIds);
+    
+      
+      // Optionally save to storage
+      // await _saveGroupsToStorage();
+    }
+  }
+Future<void> updatedGroup(Group updatedGroup) async {
+    final index = _groups.indexWhere((g) => g.id == updatedGroup.id);
+
+    if (index != -1) {
+      _groups[index] = updatedGroup; // If you're using ChangeNotifier
+          // Optionally save to local storage or database
+      // await _saveGroupsToStorage();
+    }
   }
 }

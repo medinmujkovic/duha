@@ -87,7 +87,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
               title: const Text('Napusti grupu',
                   style: TextStyle(color: Colors.red)),
               onTap: () {
-                _dataService.leaveGroup(user!.id!);
+                _dataService.leaveGroup(widget.groupId,user!.id!);
                 Navigator.pop(context);
                 _showLeaveGroupDialog();
               },
