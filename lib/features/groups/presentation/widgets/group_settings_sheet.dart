@@ -1,8 +1,10 @@
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/data/models/group_model.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GroupSettingsSheet extends StatefulWidget {
+class GroupSettingsSheet extends ConsumerStatefulWidget {
   final Group group;
   final ScrollController scrollController;
   final DataService dataService;
@@ -15,10 +17,10 @@ class GroupSettingsSheet extends StatefulWidget {
   });
 
   @override
-  State<GroupSettingsSheet> createState() => _GroupSettingsSheetState();
+  ConsumerState<GroupSettingsSheet> createState() => _GroupSettingsSheetState();
 }
 
-class _GroupSettingsSheetState extends State<GroupSettingsSheet> {
+class _GroupSettingsSheetState extends ConsumerState<GroupSettingsSheet> {
   late TextEditingController _nameController;
   late String _selectedIcon;
   bool _isEditing = false;
@@ -51,13 +53,11 @@ class _GroupSettingsSheetState extends State<GroupSettingsSheet> {
     );
 
     // Call your data service method to update the group
-     await widget.dataService.updatedGroup(updatedGroup);
+    await widget.dataService.updatedGroup(updatedGroup);
 
     setState(() {
       _isEditing = false;
     });
-
-    
   }
 
   Color _getColorFromName(String colorName) {
@@ -119,7 +119,7 @@ class _GroupSettingsSheetState extends State<GroupSettingsSheet> {
     return widget.dataService.getUserById(userId).name ?? "NO";
   }
 
-Future<void> _removeMember(String groupId, String memberId) async {
+  Future<void> _removeMember(String groupId, String memberId) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -143,13 +143,13 @@ Future<void> _removeMember(String groupId, String memberId) async {
 
     if (confirmed == true) {
       // Remove member via data service
-       widget.dataService.leaveGroup(groupId,memberId);
-      
+      widget.dataService.leaveGroup(groupId, memberId);
+
       // Update UI
       setState(() {
         // This will rebuild the widget and fetch the updated group
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('$memberId removed from group')),
@@ -243,6 +243,8 @@ Future<void> _removeMember(String groupId, String memberId) async {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+
     return Container(
       padding: const EdgeInsets.all(16),
       child: ListView(
@@ -357,11 +359,15 @@ Future<void> _removeMember(String groupId, String memberId) async {
                     ),
                   ),
                   title: Text(userName),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.remove_circle_outline,
-                        color: Colors.red),
-                    onPressed: () => _removeMember(widget.group.id,memberId),
-                  ),
+                  trailing:
+                      memberId == user?.id || memberId == widget.group.ownerId
+                          ? null
+                          : IconButton(
+                              icon: const Icon(Icons.remove_circle_outline,
+                                  color: Colors.red),
+                              onPressed: () =>
+                                  _removeMember(widget.group.id, memberId),
+                            ),
                 );
               },
             );

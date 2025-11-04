@@ -277,11 +277,21 @@ class DataService {
     ));
   }
 
-  void addGroupMembers(String groupId, List<String> memberIds) {
-    final group = _groups.firstWhere((g) => g.id == groupId);
-    group.memberIds.addAll(memberIds);
+void addGroupMembers(String groupId, List<String> memberIds) {
+    final index = _groups.indexWhere((g) => g.id == groupId);
+    
+    if (index != -1) {
+      final group = _groups[index];
+      final updatedMemberIds = List<String>.from(group.memberIds ?? [])
+        ..addAll(memberIds);
+      
+      _groups[index] = group.copyWith(memberIds: updatedMemberIds);
+      
+      
+      // Optionally save to storage
+      // await _saveGroupsToStorage();
+    }
   }
-
   List<UserModel> getGroupMembers(String groupId) {
     final group = _groups.firstWhere((g) => g.id == groupId);
     final memberIds = group.memberIds;
