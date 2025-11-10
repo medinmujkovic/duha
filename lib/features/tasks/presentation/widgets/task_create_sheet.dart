@@ -1,6 +1,6 @@
 import 'package:duha_app/common/utils/priority_colors.dart';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:duha_app/features/tasks/data/enums/task_enum.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/task/task_model.dart';

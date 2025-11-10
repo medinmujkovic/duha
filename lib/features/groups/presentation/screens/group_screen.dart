@@ -3,9 +3,9 @@ import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/core/util/group_utils.dart';
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
-import 'package:duha_app/features/tasks/presentation/providers/data_service_provider.dart';
+import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

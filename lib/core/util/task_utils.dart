@@ -1,5 +1,5 @@
   import 'package:duha_app/features/tasks/presentation/widgets/task_detail_sheet.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_create_sheet.dart';
 import 'package:flutter/material.dart';

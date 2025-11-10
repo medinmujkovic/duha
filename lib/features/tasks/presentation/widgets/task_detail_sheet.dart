@@ -1,6 +1,6 @@
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:duha_app/features/tasks/data/enums/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/subtask/subtask_model.dart';
 import 'package:duha_app/features/tasks/data/models/task_comment/task_comment.dart';

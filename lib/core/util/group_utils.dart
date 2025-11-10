@@ -3,7 +3,7 @@
 
 import 'package:duha_app/features/groups/data/models/group_model.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_settings_sheet.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:flutter/material.dart';
 
 void showGroupSettings(BuildContext context, DataService dataService, Group group) {

@@ -1,7 +1,7 @@
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/data/models/group_model.dart';
 import 'package:duha_app/features/groups/presentation/screens/group_screen.dart';
-import 'package:duha_app/features/tasks/presentation/providers/data_service_provider.dart';
+import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,29 +10,46 @@ class GroupsTab extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dataService = ref.watch(dataServiceProvider);
     final user = ref.watch(userProvider);
     final userId = user?.id;
 
-    if (userId == null) {
-      return const Center(
+  if (userId == null) {
+    return const Center(child: Text('User not authenticated'));
+  }
+
+    final groups = ref.watch(userGroupsStreamProvider(userId));
+
+    return groups.when(
+      data: (groups) => _buildGroupsList(context, ref, groups),
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red),
-            SizedBox(height: 16),
-            Text('User not authenticated'),
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text('Error: $error'),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                ref.invalidate(userGroupsStreamProvider(userId));
+              },
+              child: const Text('Retry'),
+            ),
           ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    final groups = dataService.getUserGroups(userId);
-
+   Widget _buildGroupsList(BuildContext context, WidgetRef ref, List<Group> groups) {
     return RefreshIndicator(
       onRefresh: () async {
         // Force refresh by invalidating the provider
-        ref.invalidate(dataServiceProvider);
+        final userId = ref.read(userProvider)?.id;
+        if (userId != null) {
+          ref.invalidate(userGroupsStreamProvider(userId));
+        }
       },
       child: ListView(
         padding: const EdgeInsets.all(16),
@@ -132,7 +149,7 @@ class GroupsTab extends ConsumerWidget {
                   ),
                 ),
               );
-            }).toList(),
+            }),
         ],
       ),
     );

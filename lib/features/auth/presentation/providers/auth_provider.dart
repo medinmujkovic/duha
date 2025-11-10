@@ -1,5 +1,5 @@
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../states/auth_state.dart';
 

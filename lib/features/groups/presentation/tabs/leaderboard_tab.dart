@@ -1,7 +1,7 @@
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
-import 'package:duha_app/features/tasks/presentation/providers/data_service_provider.dart';
+import 'package:duha_app/common/data_service.dart';
+import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,7 +27,7 @@ class LeaderboardTab extends ConsumerWidget {
       );
     }
 
-    final friends = dataService.getUserFriends(userId);
+    final friends = dataService.getUserFriendsStream(userId);
 
     final allUsers = <UserModel>[me!, ...friends]..sort((a, b) {
         final byXp = (b.xp ?? 0).compareTo(a.xp ?? 0);

@@ -1,7 +1,7 @@
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/notifications/data/models/notification_enum.dart';
 import 'package:duha_app/features/notifications/data/models/notifications_model.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/common/data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
