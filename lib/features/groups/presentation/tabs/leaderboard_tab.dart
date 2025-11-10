@@ -1,110 +1,124 @@
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/features/tasks/presentation/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LeaderboardTab extends ConsumerStatefulWidget {
+class LeaderboardTab extends ConsumerWidget {
   const LeaderboardTab({Key? key}) : super(key: key);
 
   @override
-  _LeaderboardTabState createState() => _LeaderboardTabState();
-}
-
-class _LeaderboardTabState extends ConsumerState<LeaderboardTab>
-    with AutomaticKeepAliveClientMixin {
-  final DataService _dataService = DataService();
-  List<UserModel> _leaderboard = [];
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadLeaderboard();
-  }
-
-  Future<void> _loadLeaderboard() async {
-    final user = ref.read(userProvider);
-    final userId = user?.id;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dataService = ref.watch(dataServiceProvider);
+    final me = ref.watch(userProvider);
+    final userId = me?.id;
 
     if (userId == null) {
-      setState(() {
-        _error = 'User not authenticated';
-        _isLoading = false;
-      });
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      // Replace this with your actual API call
-      // final groups = await _dataService.getGroupsForUser(userId);
-
-      // For now, using local data service
-      final leaderboard = _dataService.getLeaderboard(userId);
-
-      setState(() {
-        _leaderboard = leaderboard;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    if (_error != null) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.error_outline, size: 48, color: Colors.red),
             SizedBox(height: 16),
-            Text(_error!),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadLeaderboard,
-              child: Text('Retry'),
-            ),
+            Text('User not authenticated'),
           ],
         ),
       );
     }
 
+    final friends = dataService.getUserFriends(userId);
+
+    final allUsers = <UserModel>[me!, ...friends]..sort((a, b) {
+        final byXp = (b.xp ?? 0).compareTo(a.xp ?? 0);
+        if (byXp != 0) return byXp;
+        final byName = (a.name ?? '').compareTo(b.name ?? '');
+        if (byName != 0) return byName;
+        return (a.id ?? '').compareTo(b.id ?? '');
+      });
+
+    final myIndex = allUsers.indexWhere((u) => u.id == userId);
+    final myRank = myIndex + 1;
+
+    Color? medalColorFor(int rank) {
+      if (rank == 1) return Colors.amber;
+      if (rank == 2) return Colors.grey[400];
+      if (rank == 3) return Colors.orange[300];
+      return null;
+    }
+
+    final leaderboardRows = allUsers.where((u) => u.id != userId).toList();
+
     return RefreshIndicator(
-      onRefresh: _loadLeaderboard,
+      onRefresh: () async {
+        ref.invalidate(dataServiceProvider);
+      },
       child: ListView.builder(
         padding: EdgeInsets.all(16),
-        itemCount: _leaderboard.length,
+        itemCount: 1 + (leaderboardRows.isEmpty ? 0 : leaderboardRows.length),
         itemBuilder: (context, index) {
-          final user = _leaderboard[index];
-          final rank = index + 1;
-          Color? medalColor;
+          if (index == 0) {
+            // HEADER: Your progress card
+            final color = medalColorFor(myRank) ?? const Color(0xFF7C3AED);
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              elevation: 1.5,
+              child: ListTile(
+                leading: Container(
+                  width: 48,
+                  height: 48,
+                  decoration:
+                      BoxDecoration(color: color, shape: BoxShape.circle),
+                  child: Center(
+                    child: Text(
+                      myRank.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  me.name ?? 'You',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Row(
+                  children: [
+                    const Icon(Icons.star, size: 14, color: Colors.amber),
+                    Text(' ${me.xp ?? 0} XP'),
+                    const SizedBox(width: 12),
+                    const Icon(Icons.local_fire_department,
+                        size: 14, color: Colors.orange),
+                    Text(' ${me.streak ?? 0}d'),
+                  ],
+                ),
+                trailing: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
+                    Text(
+                      'Lvl ${me.level ?? 0}',
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
 
-          if (rank == 1) medalColor = Colors.amber;
-          if (rank == 2) medalColor = Colors.grey[400];
-          if (rank == 3) medalColor = Colors.orange[300];
+          // Leaderboard rows (including you, highlighted)
+          final u = leaderboardRows[index - 1];
+          final rank =
+              allUsers.indexWhere((x) => x.id == u.id) + 1; // keeps true rank
+          final medalColor = medalColorFor(rank);
 
           return Card(
-            margin: EdgeInsets.only(bottom: 12),
+            margin: const EdgeInsets.only(bottom: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -127,27 +141,26 @@ class _LeaderboardTabState extends ConsumerState<LeaderboardTab>
                   ),
                 ),
               ),
-              title: Text(
-                user.name??'Unknown',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              title: Text(u.name ?? 'Unknown',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               subtitle: Row(
                 children: [
-                  Icon(Icons.star, size: 14, color: Colors.amber),
-                  Text(' ${user.xp} XP'),
-                  SizedBox(width: 12),
-                  Icon(Icons.local_fire_department,
+                  const Icon(Icons.star, size: 14, color: Colors.amber),
+                  Text(' ${u.xp ?? 0} XP'),
+                  const SizedBox(width: 12),
+                  const Icon(Icons.local_fire_department,
                       size: 14, color: Colors.orange),
-                  Text(' ${user.streak}d'),
+                  Text(' ${u.streak ?? 0}d'),
                 ],
               ),
               trailing: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
+                  const Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
                   Text(
-                    'Lvl ${user.level}',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    'Lvl ${u.level ?? 0}',
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

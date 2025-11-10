@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/data/models/group_model.dart';
@@ -92,27 +93,21 @@ class DataService extends ChangeNotifier {
   List<Group> getUserGroups(String id) =>
       _groups.where((g) => g.memberIds.contains(id)).toList();
 
-  List<UserModel> getLeaderboard(String id) {
-    final userActivities = <UserModel>[];
+  List<UserModel> getUserFriends(String userId) {
+    List<Group> groups = getUserGroups(userId);
+    Set members = {};
 
-    for (var group in getUserGroups(id)) {
-      for (var memberId in group.memberIds) {
-        userActivities.add(UserModel(
-            id: memberId,
-            xp: Random().nextInt(5000),
-            level: Random().nextInt(20),
-            streak: Random().nextInt(30),
-            name: '',
-            email: '',
-            avatar: '',
-            password: ""));
-      }
+    for (var group in groups) {
+      members.addAll(group.memberIds);
     }
 
-    userActivities.sort((a, b) =>
-        int.parse(b.xp as String).compareTo(int.parse(a.xp as String)));
+    List<UserModel> friends = members
+        .map((id) => getUserById(id))
+        .where((user) => user != null)
+        .cast<UserModel>()
+        .toList();
 
-    return userActivities;
+    return friends;
   }
 
   List<Notifications> getActivitiesForUser(String id) {
