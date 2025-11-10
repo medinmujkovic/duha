@@ -5,6 +5,8 @@ import 'package:duha_app/features/projects/presentation/screens/history_screen.d
 import 'package:duha_app/features/tasks/presentation/screens/list_view_screen.dart';
 import 'package:duha_app/features/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'firebase_options.dart';
+
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
