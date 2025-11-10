@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/common/data_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,6 +10,11 @@ part 'auth_provider.g.dart';
 
 @riverpod
 class Auth extends _$Auth {
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+
   @override
   AuthState build() {
     return const AuthState();
@@ -66,19 +74,25 @@ class Auth extends _$Auth {
     try {
       await Future.delayed(const Duration(seconds: 1));
 
-      // TODO: Firebase Auth
-      // await FirebaseAuth.instance.sendPasswordResetEmail(
-      //   email: state.email,
-      // );
-
+      await _firebaseAuth.sendPasswordResetEmail(
+        email: state.email,
+      );
+      
       state = state.copyWith(
         isSubmitting: false,
         infoMessage: 'Password reset link sent to ${state.email}',
       );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Failed to send reset email. Please try again.';
+      
+      state = state.copyWith(
+        isSubmitting: false,
+        errorMessage: errorMessage,
+      );
     } catch (e) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: 'Failed to send reset email. Please try again.',
+        errorMessage: 'An unexpected error occurred.',
       );
     }
   }
@@ -101,95 +115,150 @@ class Auth extends _$Auth {
     );
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
-
-      // TODO: Firebase Authentication
-      // if (state.isLogin) {
-      //   final credential = await FirebaseAuth.instance
-      //       .signInWithEmailAndPassword(
-      //     email: state.email,
-      //     password: state.password,
-      //   );
-      //
-      //   final userDoc = await FirebaseFirestore.instance
-      //       .collection('users')
-      //       .doc(credential.user!.uid)
-      //       .get();
-      //
-      //   final user = UserModel.fromJson(userDoc.data()!);
-      //   ref.read(userProvider.notifier).setUser(user);
-      // } else {
-      //   final credential = await FirebaseAuth.instance
-      //       .createUserWithEmailAndPassword(
-      //     email: state.email,
-      //     password: state.password,
-      //   );
-      //
-
       if (state.isLogin) {
+        // Login with Firebase Auth
+        final credential = await _firebaseAuth.signInWithEmailAndPassword(
+          email: state.email,
+          password: state.password,
+        );
 
-        final presentUser = DataService().loginUser(state.email, state.password);
+        // Get user data from Firestore
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(credential.user!.uid)
+            .get();
 
-        if (presentUser == null) {
-          throw Exception('Invalid email or password.');
+        if (!userDoc.exists) {
+          throw Exception('User data not found');
         }
-        print( presentUser);
-        ref.read(userProvider.notifier).setUser(presentUser);
+
+        final user = UserModel.fromJson(userDoc.data()!);
+        ref.read(userProvider.notifier).setUser(user);
+
         state = state.copyWith(
           isSubmitting: false,
           isSuccess: true,
-          // keep isLogin: true
         );
       } else {
-        final newUser = DataService().createUser(
-          state.name,
-          state.email,
-          state.password,
-          '',
+        // Register with Firebase Auth
+        final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+          email: state.email,
+          password: state.password,
         );
 
+        // Create user model
+        final newUser = UserModel(
+          id: credential.user!.uid,
+          name: state.name,
+          email: state.email,
+          avatar: '',
+          xp: 0,
+          level: 1,
+          streak: 0,
+          password: '', // Don't store password in Firestore
+        );
+
+        // Save user to Firestore
+        await _firestore
+            .collection('users')
+            .doc(newUser.id)
+            .set(newUser.toJson());
+
+        // Update display name in Firebase Auth
+        await credential.user!.updateDisplayName(state.name);
+
+        // Set user in provider
         ref.read(userProvider.notifier).setUser(newUser);
+
+        state = state.copyWith(
+          isSubmitting: false,
+          isSuccess: true,
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Authentication failed';
+
+      switch (e.code) {
+        case 'user-not-found':
+          errorMessage = 'No user found with this email.';
+          break;
+        case 'wrong-password':
+          errorMessage = 'Incorrect password.';
+          break;
+        case 'email-already-in-use':
+          errorMessage = 'An account already exists with this email.';
+          break;
+        case 'weak-password':
+          errorMessage = 'Password is too weak.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        case 'user-disabled':
+          errorMessage = 'This account has been disabled.';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = 'Authentication failed: ${e.message}';
       }
 
-      //
-      //   await FirebaseFirestore.instance
-      //       .collection('users')
-      //       .doc(newUser.id)
-      //       .set(newUser.toJson());
-      //
-
-      // }
-      //
-      state = validatedState.copyWith(
+      state = state.copyWith(
         isSubmitting: false,
-        isSuccess: true,
+        errorMessage: errorMessage,
       );
     } catch (e) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: 'Authentication failed: ${e.toString()}',
+        errorMessage: 'An unexpected error occurred: ${e.toString()}',
+      );
+    }
+  }
+  // Logout
+   Future<void> logout() async {
+    try {
+      // Sign out from Firebase
+      await _firebaseAuth.signOut();
+
+      // Clear user from userProvider
+      ref.read(userProvider.notifier).clearUser();
+
+      // Reset auth state
+      state = const AuthState(
+        isLogin: true,
+        email: '',
+        password: '',
+        name: '',
+        infoMessage: 'Logged out successfully',
+      );
+    } catch (e) {
+      state = state.copyWith(
+        errorMessage: 'Failed to logout: ${e.toString()}',
       );
     }
   }
 
-  // Logout
-  Future<void> logout() async {
-    // Clear user from userProvider
-    ref.read(userProvider.notifier).clearUser();
+  // Check if user is already logged in
+  Future<void> checkAuthState() async {
+    final user = _firebaseAuth.currentUser;
+    
+    if (user != null) {
+      try {
+        final userDoc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .get();
 
-    // Reset auth state
-    state = const AuthState(
-      isLogin: true,
-      email: '',
-      password: '',
-      name: '',
-      infoMessage: 'Logged out successfully',
-    );
-
-    // TODO: Firebase logout
-    // await FirebaseAuth.instance.signOut();
+        if (userDoc.exists) {
+          final userData = UserModel.fromJson(userDoc.data()!);
+          ref.read(userProvider.notifier).setUser(userData);
+        }
+      } catch (e) {
+        print('Error checking auth state: $e');
+      }
+    }
   }
-
   // Clear messages
   void clearMessages() {
     state = state.copyWith(
