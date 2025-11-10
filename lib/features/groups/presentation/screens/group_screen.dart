@@ -5,6 +5,7 @@ import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
+import 'package:duha_app/features/tasks/presentation/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,8 +26,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
   bool _notificationsEnabled = true;
 
   void _showGroupMenu() {
-
     final user = ref.watch(userProvider);
+    final dataService = ref.read(dataServiceProvider);
 
     showModalBottomSheet(
       context: context,
@@ -78,8 +79,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
               title: const Text('Postavke grupe'),
               onTap: () {
                 Navigator.pop(context);
-                final group = _dataService.getGroupById(widget.groupId);
-                showGroupSettings(context,_dataService,group!);
+                final group = dataService.getGroupById(widget.groupId);
+                showGroupSettings(context, dataService, group!);
               },
             ),
             ListTile(
@@ -87,7 +88,6 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
               title: const Text('Napusti grupu',
                   style: TextStyle(color: Colors.red)),
               onTap: () {
-                _dataService.leaveGroup(widget.groupId,user!.id!);
                 Navigator.pop(context);
                 _showLeaveGroupDialog();
               },
@@ -101,6 +101,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
   void _showAddMemberDialog() {
     final emailController = TextEditingController();
     final user = ref.read(userProvider);
+    final dataService = ref.read(dataServiceProvider);
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -126,7 +128,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           ),
           FilledButton(
             onPressed: () {
-              _dataService.sendGroupInvite(user!.email!,emailController.text,widget.groupId);
+              dataService.sendGroupInvite(
+                  user!.email!, emailController.text, widget.groupId);
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -142,6 +145,9 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
   }
 
   void _showLeaveGroupDialog() {
+    final user = ref.read(userProvider);
+    final dataService = ref.read(dataServiceProvider);
+    
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -154,6 +160,7 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           ),
           FilledButton(
             onPressed: () {
+              dataService.leaveGroup(widget.groupId, user!.id!);
               Navigator.pop(context);
               Navigator.pop(context); // Vrati se na prethodni screen
               ScaffoldMessenger.of(context).showSnackBar(
@@ -170,7 +177,8 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final tasks = _dataService.getTasksForGroup(widget.groupId);
+    final dataService = ref.watch(dataServiceProvider);
+    final tasks = dataService.getTasksForGroup(widget.groupId);
     final user = ref.watch(userProvider);
 
     return Scaffold(

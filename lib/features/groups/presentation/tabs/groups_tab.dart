@@ -1,104 +1,39 @@
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/data/models/group_model.dart';
 import 'package:duha_app/features/groups/presentation/screens/group_screen.dart';
-import 'package:duha_app/features/projects/data/models/project_model/project_model.dart';
-import 'package:duha_app/features/tasks/data/datasources/data_service.dart';
+import 'package:duha_app/features/tasks/presentation/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class GroupsTab extends ConsumerStatefulWidget {
+class GroupsTab extends ConsumerWidget {
   const GroupsTab({super.key});
 
   @override
-  ConsumerState<GroupsTab> createState() => _GroupsTabState();
-}
-
-class _GroupsTabState extends ConsumerState<GroupsTab>
-    with AutomaticKeepAliveClientMixin {
-  final DataService _dataService = DataService();
-  List<Group> _groups = [];
-  bool _isLoading = true;
-  String? _error;
-
-  @override
-  bool get wantKeepAlive => true; // Keep state when switching tabs
-
-  @override
-  void initState() {
-    super.initState();
-    // defer reading providers until after first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadGroups();
-    });
-  }
-
-  Future<void> _loadGroups() async {
-    final user = ref.read(userProvider);
-    final userId = user?.id; 
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dataService = ref.watch(dataServiceProvider);
+    final user = ref.watch(userProvider);
+    final userId = user?.id;
 
     if (userId == null) {
-      if(!mounted)return;
-      setState(() {
-        _error = 'User not authenticated';
-        _isLoading = false;
-      });
-      return;
-    }
-
-    if(!mounted)return;
-      setState(() {
-        _isLoading = true;
-        _error = null;
-      });
-
-    try {
-      // Replace this with your actual API call
-      
-      // For now, using local data service
-      final groups = _dataService.getUserGroups(userId);
-
-      if (!mounted) return;
-      setState(() {
-        _groups = groups;
-        _isLoading = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
-      });
-    }
-  }
-
- @override
-  Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
-
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_error != null) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(_error!),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadGroups,
-              child: const Text('Retry'),
-            ),
+            Icon(Icons.error_outline, size: 48, color: Colors.red),
+            SizedBox(height: 16),
+            Text('User not authenticated'),
           ],
         ),
       );
     }
 
+    final groups = dataService.getUserGroups(userId);
+
     return RefreshIndicator(
-      onRefresh: _loadGroups,
+      onRefresh: () async {
+        // Force refresh by invalidating the provider
+        ref.invalidate(dataServiceProvider);
+      },
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -125,7 +60,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: () => _showCreateGroupDialog(context),
+                    onPressed: () => _showCreateGroupDialog(context, ref),
                     icon: const Icon(Icons.add),
                     label: const Text('Create New Group'),
                     style: ElevatedButton.styleFrom(
@@ -143,7 +78,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          if (_groups.isEmpty)
+          if (groups.isEmpty)
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(32),
@@ -154,7 +89,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
               ),
             )
           else
-            ..._groups.map((group) {
+            ...groups.map((group) {
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
                 shape: RoundedRectangleBorder(
@@ -165,8 +100,7 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            GroupScreen(groupId: group.id),
+                        builder: (context) => GroupScreen(groupId: group.id),
                       ),
                     );
                   },
@@ -221,9 +155,10 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
     }
   }
 
-  void _showCreateGroupDialog(BuildContext context) {
+  void _showCreateGroupDialog(BuildContext context, WidgetRef ref) {
     final nameController = TextEditingController();
     String selectedColor = 'purple';
+    final dataService = ref.read(dataServiceProvider);
 
     showDialog(
       context: context,
@@ -247,8 +182,8 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
-                children: ['purple', 'blue', 'green', 'orange', 'pink']
-                    .map((color) {
+                children:
+                    ['purple', 'blue', 'green', 'orange', 'pink'].map((color) {
                   return GestureDetector(
                     onTap: () {
                       setDialogState(() {
@@ -284,11 +219,9 @@ class _GroupsTabState extends ConsumerState<GroupsTab>
 
                   if (userId != null) {
                     // Add group with user ID
-                    _dataService.addGroup(nameController.text,userId,selectedColor);
-                    if (mounted) Navigator.pop(context);
-                    
-                    // Reload groups
-                    await _loadGroups();
+                    dataService.addGroup(
+                        nameController.text, userId, selectedColor);
+                    Navigator.pop(context);
                   }
                 }
               },

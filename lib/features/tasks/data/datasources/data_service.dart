@@ -8,9 +8,10 @@ import 'package:duha_app/features/notifications/data/models/token_model.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
 import 'package:duha_app/features/tasks/data/enums/task_enum.dart';
 import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DataService {
+class DataService extends ChangeNotifier {
   static final DataService _instance = DataService._internal();
   factory DataService() => _instance;
   DataService._internal();
@@ -74,6 +75,7 @@ class DataService {
         streak: 0,
         password: password);
     _users.add(user);
+    notifyListeners();
     return user;
   }
 
@@ -95,7 +97,6 @@ class DataService {
 
     for (var group in getUserGroups(id)) {
       for (var memberId in group.memberIds) {
-        // Simulate fetching user activity data
         userActivities.add(UserModel(
             id: memberId,
             xp: Random().nextInt(5000),
@@ -149,6 +150,7 @@ class DataService {
                   ? 50
                   : 30,
     ));
+    notifyListeners(); // ✅ Added
   }
 
   void updateTask({
@@ -183,14 +185,12 @@ class DataService {
     );
 
     _tasks[idx] = updated;
-
-    // If this lives in a notifier/ChangeNotifier, remember to notify:
-    // notifyListeners();  // for ChangeNotifier
-    // state = [..._tasks]; // for Riverpod StateNotifier<List<Task>>
+    notifyListeners(); // ✅ Added
   }
 
   void deleteTask(String taskId) {
     _tasks.removeWhere((t) => t.id == taskId);
+    notifyListeners(); // ✅ Added
   }
 
   void toggleTaskCompletion({
@@ -198,14 +198,12 @@ class DataService {
     required String userId,
     required WidgetRef ref,
   }) {
-    // find the task
     final idx = _tasks.indexWhere((t) => t.id == taskId);
     if (idx == -1) return;
 
     final task = _tasks[idx];
     final isAlreadyCompleted = task.completedByIds.contains(userId);
 
-    // create updated completedByIds list immutably
     final updatedCompletedByIds = List<String>.from(task.completedByIds);
     if (isAlreadyCompleted) {
       updatedCompletedByIds.remove(userId);
@@ -213,21 +211,17 @@ class DataService {
       updatedCompletedByIds.add(userId);
     }
 
-    // create updated task (immutably)
     var updatedTask = task.copyWith(completedByIds: updatedCompletedByIds);
 
-    // update completedAt
     if (updatedTask.isCompleted && updatedTask.completedAt == null) {
       updatedTask = updatedTask.copyWith(completedAt: DateTime.now());
 
-      // ✅ safely update user XP via Riverpod provider
       ref.read(userProvider.notifier).updateUser((u) {
         if (u == null) return u;
 
         int newXp = u.xp + updatedTask.xpReward;
         int newLevel = u.level;
 
-        // Level up if needed
         while (newXp >= 3000) {
           newLevel += 1;
           newXp -= 3000;
@@ -239,8 +233,8 @@ class DataService {
       updatedTask = updatedTask.copyWith(completedAt: null);
     }
 
-    // Replace the task in the list immutably
     _tasks[idx] = updatedTask;
+    notifyListeners(); // ✅ Added
   }
 
   void addSection(String name) {
@@ -249,15 +243,18 @@ class DataService {
       name: name,
       order: _sections.length,
     ));
+    notifyListeners(); // ✅ Added
   }
 
   void deleteSection(String sectionId) {
     _sections.removeWhere((s) => s.id == sectionId);
+    notifyListeners(); // ✅ Added
   }
 
   void renameSection(String sectionId, String newName) {
     final section = _sections.firstWhere((s) => s.id == sectionId);
     section.name = newName;
+    notifyListeners(); // ✅ Added
   }
 
   void addGroup(
@@ -275,23 +272,22 @@ class DataService {
           'https://projectnova.app/join/${DateTime.now().millisecondsSinceEpoch}',
       createdAt: DateTime.now(),
     ));
+    notifyListeners(); // ✅ Added
   }
 
-void addGroupMembers(String groupId, List<String> memberIds) {
+  void addGroupMembers(String groupId, List<String> memberIds) {
     final index = _groups.indexWhere((g) => g.id == groupId);
-    
+
     if (index != -1) {
       final group = _groups[index];
       final updatedMemberIds = List<String>.from(group.memberIds ?? [])
         ..addAll(memberIds);
-      
+
       _groups[index] = group.copyWith(memberIds: updatedMemberIds);
-      
-      
-      // Optionally save to storage
-      // await _saveGroupsToStorage();
+      notifyListeners(); // ✅ Added
     }
   }
+
   List<UserModel> getGroupMembers(String groupId) {
     final group = _groups.firstWhere((g) => g.id == groupId);
     final memberIds = group.memberIds;
@@ -326,6 +322,7 @@ void addGroupMembers(String groupId, List<String> memberIds) {
 
   void deleteNotification(String id) {
     _notifications.removeWhere((n) => n.id == id);
+    notifyListeners(); // ✅ Added
   }
 
   void sendGroupInvite(
@@ -342,6 +339,7 @@ void addGroupMembers(String groupId, List<String> memberIds) {
         type: NotificationType.groupInvite,
         viewed: false,
         createdAt: DateTime.now()));
+    notifyListeners(); // ✅ Added
   }
 
   UserModel? getUserByEmail(String email) {
@@ -352,28 +350,25 @@ void addGroupMembers(String groupId, List<String> memberIds) {
     return _groups.firstWhere((g) => g.id == groupId);
   }
 
-void leaveGroup(String groupID, String memberId) {
+  void leaveGroup(String groupID, String memberId) {
     final index = _groups.indexWhere((g) => g.id == groupID);
-    
+
     if (index != -1) {
       final group = _groups[index];
       final updatedMemberIds = List<String>.from(group.memberIds ?? [])
         ..remove(memberId);
-      
+
       _groups[index] = group.copyWith(memberIds: updatedMemberIds);
-    
-      
-      // Optionally save to storage
-      // await _saveGroupsToStorage();
+      notifyListeners(); // ✅ Added
     }
   }
-Future<void> updatedGroup(Group updatedGroup) async {
+
+  Future<void> updatedGroup(Group updatedGroup) async {
     final index = _groups.indexWhere((g) => g.id == updatedGroup.id);
 
     if (index != -1) {
-      _groups[index] = updatedGroup; // If you're using ChangeNotifier
-          // Optionally save to local storage or database
-      // await _saveGroupsToStorage();
+      _groups[index] = updatedGroup;
+      notifyListeners(); // ✅ Added
     }
   }
 }

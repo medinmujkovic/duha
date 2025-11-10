@@ -467,9 +467,9 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
             assigneeIds: _selectedAssignees,
             groupId: widget.groupId,
             taskType: _selectedTaskType,
-          );
-        Navigator.pop(context);
+          );       
       }
+      Navigator.pop(context);
     }
   }
 }
