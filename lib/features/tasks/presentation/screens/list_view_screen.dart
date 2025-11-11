@@ -1,8 +1,9 @@
+import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/projects/data/models/section_model/section_model.dart';
-import 'package:duha_app/common/data_service.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,37 +16,56 @@ class CustomListView extends ConsumerStatefulWidget {
 }
 
 class _CustomListViewState extends ConsumerState<CustomListView> {
-  final DataService _dataService = DataService();
+
   @override
   Widget build(BuildContext context) {
-    final sections = _dataService.getSections();
-    final tasks = _dataService.getTasks();
+    final dataService = ref.read(dataServiceProvider);
     final user = ref.read(userProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('All Projects'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_box_outlined),
-            onPressed: () => _showAddSectionDialog(context),
-            tooltip: 'Add Section',
-          ),
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _showFilterSheet(context),
-          ),
-        ],
-      ),
-      body: sections.isEmpty
-          ? Center(
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text('User not authenticated')),
+      );
+    }
+
+  final sectionsStream = dataService.getSectionsStream(user.id!);
+  final tasksStream = dataService.getTasksForUserStream(user.id!);
+
+    return StreamBuilder<List<Section>>(
+      stream: sectionsStream,
+      builder: (context, secSnap) {
+        if (secSnap.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (secSnap.hasError) {
+          return Scaffold(body: Center(child: Text('Error: ${secSnap.error}')));
+        }
+
+        final sections = secSnap.data ?? <Section>[];
+
+        if (sections.isEmpty) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('All Projects'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add_box_outlined),
+                  onPressed: () => _showAddSectionDialog(context),
+                  tooltip: 'Add Section',
+                ),
+                IconButton(
+                  icon: const Icon(Icons.filter_list),
+                  onPressed: () => _showFilterSheet(context),
+                ),
+              ],
+            ),
+            body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.inbox, size: 80, color: Colors.grey[300]),
                   const SizedBox(height: 16),
-                  Text('No sections yet',
-                      style: TextStyle(color: Colors.grey[600])),
+                  Text('No sections yet', style: TextStyle(color: Colors.grey[600])),
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () => _showAddSectionDialog(context),
@@ -53,83 +73,120 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
                   ),
                 ],
               ),
-            )
-          : ListView.builder(
-              itemCount: sections.length,
-              itemBuilder: (context, index) {
-                final section = sections[index];
-                final sectionTasks = tasks
-                    .where((t) => t.sectionId == section.id && !t.isCompleted)
-                    .toList();
-
-                return ExpansionTile(
-                  initiallyExpanded: true,
-                  leading: const Icon(Icons.folder, color: Color(0xFF7C3AED)),
-                  title: Text(
-                    section.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text('${sectionTasks.length} tasks'),
-                  trailing: PopupMenuButton(
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'rename',
-                        child: Text('Rename'),
-                      ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: Text('Delete'),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      if (value == 'rename') {
-                        _showRenameSectionDialog(context, section);
-                      } else if (value == 'delete') {
-                        _dataService.deleteSection(section.id);
-                        setState(() {});
-                      }
-                    },
-                  ),
-                  children: [
-                    ...sectionTasks.map((task) => TaskCard(
-                          task: task,
-                          onTap: () {
-                            showTaskDetail(context,_dataService, task, sectionId: section.id);
-                          },
-                          onToggle: () {
-                            setState(() {
-                              _dataService.toggleTaskCompletion(
-                                  taskId:task.id, userId:user?.id ?? '',ref:ref);
-                            });
-                          },
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: OutlinedButton.icon(
-                        onPressed: () {
-                          print(section.id);
-                          showTaskCreate(context, null,user?.id, sectionId: section.id);
-                        },
-                        icon: const Icon(Icons.add),
-                        label: const Text('Add Task'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF7C3AED),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
+            ),
+            floatingActionButton: AddTaskButton(
+              onPressed: () {
+                showTaskCreate(context, null, user.id);
               },
             ),
-      floatingActionButton: AddTaskButton(
-        onPressed: () {
-          showTaskCreate(context, null,user?.id);
-        },
-      ),
+          );
+        }
+
+        return StreamBuilder<List<Task>>(
+          stream: tasksStream,
+          builder: (context, taskSnap) {
+            if (taskSnap.connectionState == ConnectionState.waiting) {
+              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            }
+            if (taskSnap.hasError) {
+              return Scaffold(body: Center(child: Text('Error: ${taskSnap.error}')));
+            }
+
+            final tasks = taskSnap.data ?? <Task>[];
+
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('All Projects'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.add_box_outlined),
+                    onPressed: () => _showAddSectionDialog(context),
+                    tooltip: 'Add Section',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: () => _showFilterSheet(context),
+                  ),
+                ],
+              ),
+              body: ListView.builder(
+                itemCount: sections.length,
+                itemBuilder: (context, index) {
+                  final section = sections[index];
+                  final sectionTasks = tasks.where((t) => t.sectionId == section.id && !t.isCompleted).toList();
+
+                  return ExpansionTile(
+                    initiallyExpanded: true,
+                    leading: const Icon(Icons.folder, color: Color(0xFF7C3AED)),
+                    title: Text(
+                      section.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text('${sectionTasks.length} tasks'),
+                    trailing: PopupMenuButton(
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'rename',
+                          child: Text('Rename'),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Delete'),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        if (value == 'rename') {
+                          _showRenameSectionDialog(context, section);
+                        } else if (value == 'delete') {
+                          dataService.deleteSection(section.id);
+                          setState(() {});
+                        }
+                      },
+                    ),
+                    children: [
+                      ...sectionTasks.map((task) => TaskCard(
+                            task: task,
+                            onTap: () {
+                              showTaskDetail(context, dataService, task, sectionId: section.id);
+                            },
+                            onToggle: () {
+                              setState(() {
+                                dataService.toggleTaskCompletion(taskId: task.id, userId: user.id!, ref: ref);
+                              });
+                            },
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            showTaskCreate(context, null, user.id!, sectionId: section.id);
+                          },
+                          icon: const Icon(Icons.add),
+                          label: const Text('Add Task'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFF7C3AED),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+              floatingActionButton: AddTaskButton(
+                onPressed: () {
+                  showTaskCreate(context, null, user.id!);
+                },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   void _showAddSectionDialog(BuildContext context) {
+    final dataService = ref.read(dataServiceProvider);
+    final user = ref.read(userProvider);
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -148,7 +205,7 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                _dataService.addSection(controller.text);
+                dataService.addSection(controller.text, user?.id ?? '');
                 setState(() {});
                 Navigator.pop(context);
               }
@@ -160,7 +217,8 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
     );
   }
 
-  void _showRenameSectionDialog(BuildContext context, SectionModel section) {
+  void _showRenameSectionDialog(BuildContext context, Section section) {
+    final dataService = ref.read(dataServiceProvider);
     final controller = TextEditingController(text: section.name);
     showDialog(
       context: context,
@@ -179,7 +237,7 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
           ElevatedButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                _dataService.renameSection(section.id, controller.text);
+                dataService.renameSection(section.id, controller.text);
                 setState(() {});
                 Navigator.pop(context);
               }
@@ -191,8 +249,9 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
     );
   }
 
-  void _showFilterSheet(BuildContext context) {
-    final filteredTasks = _dataService.getCompletedTasks();
+  Future<void> _showFilterSheet(BuildContext context) async {
+    final dataService = ref.read(dataServiceProvider);
+    final filteredTasks = await dataService.getCompletedTasks();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

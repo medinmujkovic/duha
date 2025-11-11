@@ -1,3 +1,4 @@
+import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/common/widgets/signout_button.dart';
 import 'package:duha_app/core/constants/app_constants.dart';
@@ -5,11 +6,11 @@ import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/filtering/presentation/screens/filter_sheet.dart';
 import 'package:duha_app/features/notifications/presentation/screens/notifications_screen.dart';
-import 'package:duha_app/common/data_service.dart';
 import 'package:duha_app/features/tasks/presentation/screens/task_detail_screen.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -20,10 +21,10 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  final DataService _dataService = DataService();
-
+  
   @override
   Widget build(BuildContext context) {
+    final dataService = ref.read(dataServiceProvider);
     final user = ref.watch(userProvider);
 
     if (user == null) {
@@ -31,8 +32,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         body: Center(child: Text(AppMessages.noUserLoggedIn)),
       );
     }
-    final tasks = _dataService.getTasksForUser(user.id ?? '0');
-    final incompleteTasks = tasks.where((t) => !t.isCompleted).toList();
+
+    final tasksStream = dataService.getTasksForUserStream(user.id ?? '0');
+
+    return StreamBuilder<List<Task>>(
+      stream: tasksStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(child: Text('Error: ${snapshot.error}')),
+          );
+        }
+
+    final tasksList = snapshot.data ?? <Task>[];
+    final incompleteTasks = tasksList.where((t) => !t.isCompleted).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -91,7 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Keep your ${user.streak}-day streak alive. $incompleteTasks tasks remaining.',
+                    'Keep your ${user.streak}-day streak alive. ${incompleteTasks.length} tasks remaining.',
                     style: const TextStyle(color: Colors.white70),
                   ),
                 ],
@@ -160,9 +179,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: tasks.where((t) => !t.isCompleted).take(5).length,
+              itemCount: incompleteTasks.length > 5 ? 5 : incompleteTasks.length,
               itemBuilder: (context, index) {
-                final task = tasks.where((t) => !t.isCompleted).toList()[index];
+                final task = incompleteTasks[index];
                 return TaskCard(
                   task: task,
                   onTap: () {
@@ -175,7 +194,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   },
                   onToggle: () {
                     setState(() {
-                      _dataService.toggleTaskCompletion(
+                      dataService.toggleTaskCompletion(
                           taskId:task.id, userId: user.id ?? '0',ref:ref);
                     });
                   },
@@ -190,6 +209,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           showTaskCreate(context, null, user.id);
         },
       ),
+        );
+      },
     );
   }
 

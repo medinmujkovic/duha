@@ -53,7 +53,7 @@ class _GroupSettingsSheetState extends ConsumerState<GroupSettingsSheet> {
     );
 
     // Call your data service method to update the group
-    await widget.dataService.updatedGroup(updatedGroup);
+    await widget.dataService.updateGroup(updatedGroup);
 
     setState(() {
       _isEditing = false;
@@ -116,7 +116,8 @@ class _GroupSettingsSheetState extends ConsumerState<GroupSettingsSheet> {
   }
 
   Future<String> _getUserName(String userId) async {
-    return widget.dataService.getUserById(userId).name ?? "NO";
+    final user = await widget.dataService.getUserById(userId);
+    return user?.name ?? 'Unknown User';
   }
 
   Future<void> _removeMember(String groupId, String memberId) async {

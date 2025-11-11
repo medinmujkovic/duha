@@ -1,6 +1,5 @@
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/common/data_service.dart';
 import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,50 +12,47 @@ class LeaderboardTab extends ConsumerWidget {
     final dataService = ref.watch(dataServiceProvider);
     final me = ref.watch(userProvider);
     final userId = me?.id;
-
     if (userId == null) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48, color: Colors.red),
-            SizedBox(height: 16),
-            Text('User not authenticated'),
-          ],
-        ),
-      );
+      return const Center(child: Text('User not authenticated'));
     }
 
-    final friends = dataService.getUserFriendsStream(userId);
+    final friendsStream = dataService.getUserFriendsStream(userId);
 
-    final allUsers = <UserModel>[me!, ...friends]..sort((a, b) {
-        final byXp = (b.xp ?? 0).compareTo(a.xp ?? 0);
-        if (byXp != 0) return byXp;
-        final byName = (a.name ?? '').compareTo(b.name ?? '');
-        if (byName != 0) return byName;
-        return (a.id ?? '').compareTo(b.id ?? '');
-      });
+    return StreamBuilder<List<UserModel>>(
+      stream: friendsStream,
+      builder: (context, snapshot) {
+        final friends = snapshot.data ?? <UserModel>[];
 
-    final myIndex = allUsers.indexWhere((u) => u.id == userId);
-    final myRank = myIndex + 1;
+        final allUsers = <UserModel>[me!, ...friends]
+          ..sort((a, b) {
+            final byXp = b.xp.compareTo(a.xp);
+            if (byXp != 0) return byXp;
+            final byName = (a.name ?? '').compareTo(b.name ?? '');
+            if (byName != 0) return byName;
+            return (a.id ?? '').compareTo(b.id ?? '');
+          });
 
-    Color? medalColorFor(int rank) {
-      if (rank == 1) return Colors.amber;
-      if (rank == 2) return Colors.grey[400];
-      if (rank == 3) return Colors.orange[300];
-      return null;
-    }
+        final myIndex = allUsers.indexWhere((u) => u.id == userId);
+        final myRank = myIndex + 1;
 
-    final leaderboardRows = allUsers.where((u) => u.id != userId).toList();
+        Color? medalColorFor(int rank) {
+          if (rank == 1) return Colors.amber;
+          if (rank == 2) return Colors.grey[400];
+          if (rank == 3) return Colors.orange[300];
+          return null;
+        }
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        ref.invalidate(dataServiceProvider);
-      },
-      child: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: 1 + (leaderboardRows.isEmpty ? 0 : leaderboardRows.length),
-        itemBuilder: (context, index) {
+        final leaderboardRows = allUsers.where((u) => u.id != userId).toList();
+
+        return RefreshIndicator(
+          onRefresh: () async {
+            // invalidate the provider to trigger a reload
+            ref.invalidate(dataServiceProvider);
+          },
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: 1 + (leaderboardRows.isEmpty ? 0 : leaderboardRows.length),
+            itemBuilder: (context, index) {
           if (index == 0) {
             // HEADER: Your progress card
             final color = medalColorFor(myRank) ?? const Color(0xFF7C3AED);
@@ -89,11 +85,11 @@ class LeaderboardTab extends ConsumerWidget {
                 subtitle: Row(
                   children: [
                     const Icon(Icons.star, size: 14, color: Colors.amber),
-                    Text(' ${me.xp ?? 0} XP'),
+                    Text(' ${me.xp} XP'),
                     const SizedBox(width: 12),
                     const Icon(Icons.local_fire_department,
                         size: 14, color: Colors.orange),
-                    Text(' ${me.streak ?? 0}d'),
+                    Text(' ${me.streak}d'),
                   ],
                 ),
                 trailing: Column(
@@ -101,7 +97,7 @@ class LeaderboardTab extends ConsumerWidget {
                   children: [
                     const Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
                     Text(
-                      'Lvl ${me.level ?? 0}',
+                      'Lvl ${me.level}',
                       style: const TextStyle(
                           fontSize: 12, fontWeight: FontWeight.bold),
                     ),
@@ -146,11 +142,11 @@ class LeaderboardTab extends ConsumerWidget {
               subtitle: Row(
                 children: [
                   const Icon(Icons.star, size: 14, color: Colors.amber),
-                  Text(' ${u.xp ?? 0} XP'),
+                  Text(' ${u.xp} XP'),
                   const SizedBox(width: 12),
                   const Icon(Icons.local_fire_department,
                       size: 14, color: Colors.orange),
-                  Text(' ${u.streak ?? 0}d'),
+                  Text(' ${u.streak}d'),
                 ],
               ),
               trailing: Column(
@@ -158,7 +154,7 @@ class LeaderboardTab extends ConsumerWidget {
                 children: [
                   const Icon(Icons.emoji_events, color: Color(0xFF7C3AED)),
                   Text(
-                    'Lvl ${u.level ?? 0}',
+                    'Lvl ${u.level}',
                     style: const TextStyle(
                         fontSize: 12, fontWeight: FontWeight.bold),
                   ),
@@ -168,6 +164,8 @@ class LeaderboardTab extends ConsumerWidget {
           );
         },
       ),
+    );
+      },
     );
   }
 }

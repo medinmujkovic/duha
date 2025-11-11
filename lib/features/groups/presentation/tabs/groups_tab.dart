@@ -17,7 +17,7 @@ class GroupsTab extends ConsumerWidget {
     return const Center(child: Text('User not authenticated'));
   }
 
-    final groups = ref.watch(userGroupsStreamProvider(userId));
+  final groups = ref.watch(userGroupsStreamProvider(userId));
 
     return groups.when(
       data: (groups) => _buildGroupsList(context, ref, groups),

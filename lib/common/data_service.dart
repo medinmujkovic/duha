@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
@@ -24,8 +23,10 @@ class DataService extends ChangeNotifier {
   CollectionReference get _usersCollection => _firestore.collection('users');
   CollectionReference get _groupsCollection => _firestore.collection('groups');
   CollectionReference get _tasksCollection => _firestore.collection('tasks');
-  CollectionReference get _sectionsCollection => _firestore.collection('sections');
-  CollectionReference get _notificationsCollection => _firestore.collection('notifications');
+  CollectionReference get _sectionsCollection =>
+      _firestore.collection('sections');
+  CollectionReference get _notificationsCollection =>
+      _firestore.collection('notifications');
 
   // ==================== USER METHODS ====================
 
@@ -293,9 +294,8 @@ class DataService extends ChangeNotifier {
   }
 
   Future<List<Task>> getCompletedTasks() async {
-    final snapshot = await _tasksCollection
-        .where('completedByIds', isNotEqualTo: [])
-        .get();
+    final snapshot =
+        await _tasksCollection.where('completedByIds', isNotEqualTo: []).get();
 
     return snapshot.docs
         .map((doc) => Task.fromJson(doc.data() as Map<String, dynamic>))
@@ -417,8 +417,7 @@ class DataService extends ChangeNotifier {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) =>
-              Section.fromJson(doc.data() as Map<String, dynamic>))
+          .map((doc) => Section.fromJson(doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
@@ -472,9 +471,7 @@ class DataService extends ChangeNotifier {
   }
 
   Future<void> markNotificationAsViewed(String notificationId) async {
-    await _notificationsCollection
-        .doc(notificationId)
-        .update({'viewed': true});
+    await _notificationsCollection.doc(notificationId).update({'viewed': true});
     notifyListeners();
   }
 }

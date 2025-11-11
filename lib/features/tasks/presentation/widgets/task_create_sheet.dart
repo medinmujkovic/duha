@@ -42,9 +42,9 @@ class _TaskCreateSheetState extends State<TaskCreateSheet> {
   
 
   @override
-  void initState() {
+  Future<void> initState() async {
     super.initState();
-      _availableAssignees = _dataService.getGroupMembers(widget.groupId!);
+      _availableAssignees = await _dataService.getGroupMembers(widget.groupId!);
     if (widget.task != null) {
       // Edit mode
       _titleController.text = widget.task!.title;

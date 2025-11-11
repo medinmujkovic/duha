@@ -3,7 +3,7 @@ import 'package:duha_app/common/widgets/new_task_button.dart';
 import 'package:duha_app/core/util/group_utils.dart';
 import 'package:duha_app/core/util/task_utils.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
-import 'package:duha_app/common/data_service.dart';
+import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:duha_app/features/groups/presentation/widgets/group_task_card.dart';
 import 'package:duha_app/common/providers/data_service_provider.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +22,10 @@ class GroupScreen extends ConsumerStatefulWidget {
 }
 
 class _GroupScreenState extends ConsumerState<GroupScreen> {
-  final DataService _dataService = DataService();
+
   bool _notificationsEnabled = true;
 
   void _showGroupMenu() {
-    final user = ref.watch(userProvider);
     final dataService = ref.read(dataServiceProvider);
 
     showModalBottomSheet(
@@ -79,8 +78,11 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
               title: const Text('Postavke grupe'),
               onTap: () {
                 Navigator.pop(context);
-                final group = dataService.getGroupById(widget.groupId);
-                showGroupSettings(context, dataService, group!);
+                dataService.getGroupById(widget.groupId).then((group) {
+                  if (group != null) {
+                    showGroupSettings(context, dataService, group);
+                  }
+                });
               },
             ),
             ListTile(
@@ -178,8 +180,15 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     final dataService = ref.watch(dataServiceProvider);
-    final tasks = dataService.getTasksForGroup(widget.groupId);
     final user = ref.watch(userProvider);
+
+    if (user == null) {
+      return const Scaffold(
+        body: Center(child: Text('User not authenticated')),
+      );
+    }
+
+    final tasksStream = dataService.getTasksForGroupStream(widget.groupId);
 
     return Scaffold(
       appBar: AppBar(
@@ -191,8 +200,21 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
           ),
         ],
       ),
-      body: tasks.isEmpty
-          ? const Center(
+      body: StreamBuilder<List<Task>>(
+        stream: tasksStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+
+          final tasks = snapshot.data ?? <Task>[];
+          final active = tasks.where((t) => !t.isCompleted).toList();
+
+          if (active.isEmpty) {
+            return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -209,21 +231,27 @@ class _GroupScreenState extends ConsumerState<GroupScreen> {
                   ),
                 ],
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: tasks.where((t) => !t.isCompleted).take(5).length,
-              itemBuilder: (context, index) {
-                final task = tasks.where((t) => !t.isCompleted).toList()[index];
-                return GroupTaskCard(
-                  task: task,
-                  onTap: () => showTaskDetail(context, _dataService, task),
-                );
-              },
-            ),
+            );
+          }
+
+          final displayCount = active.length > 5 ? 5 : active.length;
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: displayCount,
+            itemBuilder: (context, index) {
+              final task = active[index];
+              return GroupTaskCard(
+                task: task,
+                onTap: () => showTaskDetail(context, dataService, task),
+              );
+            },
+          );
+        },
+      ),
       floatingActionButton: AddTaskButton(
         onPressed: () {
-          showTaskCreate(context, widget.groupId, user!.id);
+          showTaskCreate(context, widget.groupId, user.id);
         },
       ),
     );
