@@ -1,4 +1,5 @@
 import 'package:duha_app/common/providers/data_service_provider.dart';
+import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/tasks/data/models/task/task_model.dart';
 import 'package:flutter/material.dart';
 import 'package:duha_app/features/tasks/presentation/widgets/summary_card.dart';
@@ -18,9 +19,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     final dataService = ref.read(dataServiceProvider);
+    final user = ref.read(userProvider);
 
     return FutureBuilder<List<Task>>(
-      future: dataService.getCompletedTasks(),
+      future: dataService.getCompletedTasks(user!.id!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(

@@ -251,7 +251,8 @@ class _CustomListViewState extends ConsumerState<CustomListView> {
 
   Future<void> _showFilterSheet(BuildContext context) async {
     final dataService = ref.read(dataServiceProvider);
-    final filteredTasks = await dataService.getCompletedTasks();
+    final user = ref.read(userProvider);
+    final filteredTasks = await dataService.getCompletedTasks(user!.id!);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

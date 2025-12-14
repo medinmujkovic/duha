@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:duha_app/features/auth/data/models/user_model.dart';
 import 'package:duha_app/features/auth/presentation/providers/user_provider.dart';
 import 'package:duha_app/features/groups/data/models/group_model.dart';
@@ -30,40 +31,46 @@ class DataService extends ChangeNotifier {
 
   // ==================== USER METHODS ====================
 
-  Future<UserModel> createUser(
-      String name, String email, String password, String avatar) async {
+  Future<UserModel> createUser({
+    required String name,
+    required String email,
+    required String password,
+    required String avatar,
+  }) async {
+    final cred = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
+
+    final uid = cred.user!.uid;
+
     final user = UserModel(
-      id: _uuid.v4(),
+      id: uid, // IMPORTANT: use Firebase uid
       name: name,
       email: email,
       avatar: avatar,
       xp: 0,
       level: 1,
       streak: 0,
-      password: password, // Note: In production, use Firebase Auth instead
+      password: '', // don’t store password
     );
 
-    await _usersCollection.doc(user.id).set(user.toJson());
+    await _usersCollection.doc(uid).set(user.toJson());
     notifyListeners();
     return user;
   }
 
-  Future<UserModel?> loginUser(String email, String password) async {
-    try {
-      final querySnapshot = await _usersCollection
-          .where('email', isEqualTo: email)
-          .where('password', isEqualTo: password)
-          .limit(1)
-          .get();
+  Future<UserModel?> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    final cred = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
 
-      if (querySnapshot.docs.isEmpty) return null;
+    final uid = cred.user!.uid;
 
-      return UserModel.fromJson(
-          querySnapshot.docs.first.data() as Map<String, dynamic>);
-    } catch (e) {
-      print('Login error: $e');
-      return null;
-    }
+    final doc = await _usersCollection.doc(uid).get();
+    if (!doc.exists) return null;
+
+    return UserModel.fromJson(doc.data() as Map<String, dynamic>);
   }
 
   Future<UserModel?> getUserById(String id) async {
@@ -293,15 +300,15 @@ class DataService extends ChangeNotifier {
     });
   }
 
-  Future<List<Task>> getCompletedTasks() async {
-    final snapshot =
-        await _tasksCollection.where('completedByIds', isNotEqualTo: []).get();
+Future<List<Task>> getCompletedTasks(String uid) async {
+  final snapshot = await _tasksCollection
+      .where('completedByIds', arrayContains: uid)
+      .get();
 
-    return snapshot.docs
-        .map((doc) => Task.fromJson(doc.data() as Map<String, dynamic>))
-        .where((task) => task.isCompleted)
-        .toList();
-  }
+  return snapshot.docs
+      .map((d) => Task.fromJson(d.data() as Map<String, dynamic>))
+      .toList();
+}
 
   // ==================== GROUP METHODS ====================
 
